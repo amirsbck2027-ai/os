@@ -4,7 +4,10 @@
   "version": "1.0.0",
   "description": "Aura OS desktop app (Electron wrapper)",
   "main": "main.js",
-  "author": "Aura OS",
+  "author": {
+    "name": "Aura OS",
+    "email": "noreply@users.noreply.github.com"
+  },
   "license": "MIT",
   "scripts": {
     "sync": "node scripts/sync-app.js",
@@ -62,7 +65,8 @@
       ],
       "category": "Utility",
       "icon": "app/icons/icon-512.png",
-      "artifactName": "Aura-OS-linux.${ext}"
+      "artifactName": "Aura-OS-linux.${ext}",
+      "maintainer": "Aura OS <noreply@users.noreply.github.com>"
     },
     "nsis": {
       "artifactName": "Aura-OS-Setup.${ext}"
@@ -70,5 +74,6 @@
     "portable": {
       "artifactName": "Aura-OS-Portable.${ext}"
     }
-  }
+  },
+  "homepage": "https://github.com/amirsbck2027-ai/os"
 }
