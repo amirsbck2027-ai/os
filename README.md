@@ -74,5 +74,6 @@ Files can be tagged with colors (Finder context menu, sidebar, and `tag:red` in 
 ## Test
 - Web: `NODE_PATH=$(npm root -g) node tests/e2e.js http://localhost:8765/index.html ./shots` (Playwright, ~250 checks; network services and Supabase are mocked, fake camera, fake Web Bluetooth)
 - Live cloud: `AURA_TEST_EMAIL=... AURA_TEST_PASS=... node tests/cloud-live.js`
+- Battery + Wi-Fi in browser (fake Battery API, online/offline): `NODE_PATH=$(npm root -g) node tests/devices.js http://localhost:8765/index.html`
 - Desktop parsers (Wi-Fi, battery, system): `cd desktop && npm test`
 - Desktop app smoke (Linux): `cd desktop && xvfb-run -a node scripts/smoke.js`

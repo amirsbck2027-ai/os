@@ -416,6 +416,53 @@ body,html{font-feature-settings:"cv11","ss03";-webkit-font-smoothing:antialiased
 .ficon{position:relative}
 .window,.wd{contain:layout style}
 #icons .ficon,.di{contain:layout style}
+/* ===== polish layer: depth, color, spacing ===== */
+:root{
+  --glass:rgba(250,250,253,.62);--glass-strong:rgba(252,252,254,.82);
+  --rim:inset 0 .5px 0 rgba(255,255,255,.7);
+  --shadow:0 0 0 .5px rgba(0,0,0,.22),0 2px 6px rgba(0,0,0,.12),0 18px 44px rgba(0,0,0,.26),0 40px 90px rgba(0,0,0,.18);
+  --shadow-off:0 0 0 .5px rgba(0,0,0,.16),0 1px 4px rgba(0,0,0,.08),0 10px 26px rgba(0,0,0,.14);
+  --ease:cubic-bezier(.25,.8,.25,1)}
+:root.dark{--glass:rgba(34,34,40,.6);--glass-strong:rgba(38,38,44,.84);--rim:inset 0 .5px 0 rgba(255,255,255,.16);
+  --shadow:0 0 0 .5px rgba(255,255,255,.16),0 2px 6px rgba(0,0,0,.35),0 18px 44px rgba(0,0,0,.5),0 40px 90px rgba(0,0,0,.4);
+  --shadow-off:0 0 0 .5px rgba(255,255,255,.1),0 1px 4px rgba(0,0,0,.25),0 10px 26px rgba(0,0,0,.35)}
+html,body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;letter-spacing:-.005em}
+#menubar{background:var(--glass);box-shadow:0 .5px 0 rgba(0,0,0,.12),var(--rim);font-weight:500}
+.window{border-radius:12px;box-shadow:var(--shadow)}
+.window.inactive{box-shadow:var(--shadow-off)}
+.window.max{border-radius:0}
+.titlebar{height:40px;background:linear-gradient(var(--glass-strong),var(--glass-strong));box-shadow:0 .5px 0 var(--line),var(--rim)}
+.titlebar .ttl{font-weight:600;font-size:13px;letter-spacing:-.01em}
+.traffic{gap:8px}.traffic i{width:12.5px;height:12.5px;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.18),inset 0 1px 1px rgba(255,255,255,.35)}
+#dock{background:var(--glass);border-radius:24px;padding:7px 9px;gap:7px;box-shadow:0 0 0 .5px rgba(255,255,255,.45),inset 0 .5px 0 rgba(255,255,255,.55),0 2px 8px rgba(0,0,0,.18),0 18px 48px rgba(0,0,0,.3)}
+.di .ic{filter:drop-shadow(0 3px 5px rgba(0,0,0,.28))}
+.di .dot{bottom:-6px;width:4.5px;height:4.5px;box-shadow:0 0 6px rgba(255,255,255,.6)}
+.wd{border-radius:22px;padding:14px 16px;background:var(--glass);box-shadow:0 0 0 .5px rgba(255,255,255,.4),var(--rim),0 2px 6px rgba(0,0,0,.1),0 14px 34px rgba(0,0,0,.2)}
+:root.dark .wd{box-shadow:0 0 0 .5px rgba(255,255,255,.12),var(--rim),0 2px 6px rgba(0,0,0,.3),0 14px 34px rgba(0,0,0,.4)}
+.dd{border-radius:11px;padding:6px;box-shadow:0 0 0 .5px var(--line),var(--rim),0 4px 12px rgba(0,0,0,.15),0 18px 50px rgba(0,0,0,.3)}
+.dd .it{border-radius:6px}
+.spbox{border-radius:20px;box-shadow:0 0 0 .5px var(--line),var(--rim),0 8px 24px rgba(0,0,0,.2),0 30px 80px rgba(0,0,0,.4)}
+#cc{border-radius:22px;box-shadow:0 0 0 .5px var(--line),var(--rim),0 4px 14px rgba(0,0,0,.18),0 24px 60px rgba(0,0,0,.32)}
+.tile{border-radius:16px;transition:background .15s var(--ease),transform .12s var(--ease)}
+.tile:active{transform:scale(.97)}
+.toast{border-radius:18px;box-shadow:0 0 0 .5px var(--line),var(--rim),0 12px 36px rgba(0,0,0,.28)}
+.btn{border-radius:7px;transition:filter .12s,transform .1s var(--ease);box-shadow:0 .5px 1px rgba(0,0,0,.08)}
+.btn:active{transform:scale(.97);filter:brightness(.94)}
+.btn.pri{background:linear-gradient(color-mix(in srgb,var(--accent) 88%,#fff),var(--accent));box-shadow:0 1px 2px color-mix(in srgb,var(--accent) 50%,transparent)}
+.tbtn{border-radius:7px;transition:background .12s}
+.field{border-radius:7px}
+.sidebar{background:var(--side);padding:12px 9px}
+.sb{border-radius:7px;transition:background .12s}
+.sb.sel{background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--text);font-weight:500}
+.ficon{border-radius:10px;transition:background .12s}
+.ficon:hover{background:var(--hover)}
+.card{border-radius:14px;box-shadow:0 0 0 .5px var(--line),0 1px 2px rgba(0,0,0,.04)}
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:rgba(128,128,136,.4);border-radius:10px;border:3px solid transparent;background-clip:padding-box}::-webkit-scrollbar-thumb:hover{background:rgba(128,128,136,.65);background-clip:padding-box;border:3px solid transparent}::-webkit-scrollbar-track{background:transparent}
+:focus-visible{outline:2px solid color-mix(in srgb,var(--accent) 70%,transparent);outline-offset:1px}
+#lock .time{font-weight:700;letter-spacing:-3px;text-shadow:0 4px 30px rgba(0,0,0,.25)}
+#lock .date{text-shadow:0 2px 14px rgba(0,0,0,.25)}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+:root.lite .window,:root.lite #dock,:root.lite .wd{box-shadow:var(--shadow-off)}
 </style>
 </head>
 <body>
@@ -689,10 +736,10 @@ const _dune=(W,H,base,amp,ph)=>{let d=`M0 ${H}L0 ${base}`;for(let x=0;x<=W;x+=40
 const _svg=(body,defs='')=>'url("data:image/svg+xml,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice"><defs>${defs}</defs>${body}</svg>`)+'")';
 const _lg=(id,stops,x2=0,y2=1)=>`<linearGradient id="${id}" x1="0" y1="0" x2="${x2}" y2="${y2}">${stops.map(([o,c,a])=>`<stop offset="${o}" stop-color="${c}"${a!=null?` stop-opacity="${a}"`:''}/>`).join('')}</linearGradient>`;
 const _rg=(id,stops)=>`<radialGradient id="${id}">${stops.map(([o,c,a])=>`<stop offset="${o}" stop-color="${c}" stop-opacity="${a}"/>`).join('')}</radialGradient>`;
-const GRAIN='url("data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .55 0"/></filter><rect width="160" height="160" filter="url(#n)"/></svg>')+'") 0 0/160px';
+const GRAIN='url("data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .13 0"/></filter><rect width="160" height="160" filter="url(#n)"/></svg>')+'") 0 0/160px';
 const _stars=(n,seed)=>{const r=_rng(seed);let o='';for(let i=0;i<n;i++)o+=`<circle cx="${(r()*1600)|0}" cy="${(r()*520)|0}" r="${(.5+r()*1.1).toFixed(1)}" fill="#fff" opacity="${(.25+r()*.6).toFixed(2)}"/>`;return o};
 const SCENES=[
- ['Dusk Ridge',()=>_svg(`<rect width="1600" height="1000" fill="url(#s)"/><circle cx="1130" cy="560" r="300" fill="url(#g)"/><path d="${_peaks(1600,1000,610,50,11,9)}" fill="#8e8fb8" opacity=".55"/><path d="${_peaks(1600,1000,690,70,23,8)}" fill="#5d5f93" opacity=".8"/><path d="${_peaks(1600,1000,790,70,37,7)}" fill="#33346a"/><path d="${_peaks(1600,1000,880,50,41,6)}" fill="#1b1c43"/>`,_lg('s',[[0,'#1d2548'],[.5,'#6b6aa6'],[.78,'#f0a98a'],[1,'#f7d3a6']])+_rg('g',[[0,'#fff1c9',.9],[1,'#fff1c9',0]]))],
+ ['Dusk Ridge',()=>_svg(`<rect width="1600" height="1000" fill="url(#s)"/><circle cx="1130" cy="560" r="300" fill="url(#g)"/><path d="${_peaks(1600,1000,610,50,11,9)}" fill="#b08fd0" opacity=".6"/><path d="${_peaks(1600,1000,690,70,23,8)}" fill="#6a4a9e" opacity=".85"/><path d="${_peaks(1600,1000,790,70,37,7)}" fill="#352068"/><path d="${_peaks(1600,1000,880,50,41,6)}" fill="#150f3a"/>`,_lg('s',[[0,'#101745'],[.42,'#5b3fa8'],[.72,'#ff7f9e'],[1,'#ffc98f']])+_rg('g',[[0,'#fff1c9',.9],[1,'#fff1c9',0]]))],
  ['Dunes',()=>_svg(`<rect width="1600" height="1000" fill="url(#s)"/><circle cx="1240" cy="330" r="90" fill="#fff6dc" opacity=".9"/><path d="${_dune(1600,1000,560,40,.6)}" fill="#e8b27a"/><path d="${_dune(1600,1000,680,50,2.1)}" fill="#d28e5b"/><path d="${_dune(1600,1000,800,45,4)}" fill="#b4693f"/><path d="${_dune(1600,1000,910,35,5.4)}" fill="#8a4a2e"/>`,_lg('s',[[0,'#f7e3c2'],[1,'#f0b98d']]))],
  ['Aurora',()=>_svg(`<rect width="1600" height="1000" fill="url(#s)"/>${_stars(120,7)}<path d="M0 360C300 180 520 520 820 300S1300 120 1600 260V420C1300 300 1100 560 800 440S280 300 0 520Z" fill="url(#a1)" opacity=".75"/><path d="M0 460C320 300 560 600 880 420S1340 280 1600 400V500C1320 420 1120 640 860 540S300 440 0 600Z" fill="url(#a2)" opacity=".5"/><path d="${_peaks(1600,1000,760,70,5,10)}" fill="#07151c"/><path d="${_peaks(1600,1000,860,60,9,8)}" fill="#030b10"/>`,_lg('s',[[0,'#050d16'],[1,'#0b2a30']])+_lg('a1',[[0,'#3df5b0',0],[.5,'#3df5b0',.9],[1,'#3a7bff',0]],1,0)+_lg('a2',[[0,'#7a5cff',0],[.5,'#37e6c8',.8],[1,'#37e6c8',0]],1,0))],
  ['Deep Sea',()=>_svg(`<rect width="1600" height="1000" fill="url(#s)"/><path d="M300 0L520 0L860 1000L420 1000Z" fill="#9be8ff" opacity=".07"/><path d="M820 0L980 0L1500 1000L1000 1000Z" fill="#9be8ff" opacity=".06"/><path d="M1180 0L1260 0L1600 700L1600 1000L1440 1000Z" fill="#9be8ff" opacity=".05"/><path d="${_dune(1600,1000,900,25,1)}" fill="#041a2b"/><path d="${_dune(1600,1000,950,18,3)}" fill="#020f1a"/>`,_lg('s',[[0,'#0e6a86'],[.55,'#0a3e5e'],[1,'#051c30']]))],
