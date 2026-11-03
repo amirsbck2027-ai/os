@@ -14,13 +14,11 @@ jobs:
     environment: { name: github-pages, url: "${{ steps.deployment.outputs.page_url }}" }
     steps:
       - uses: actions/checkout@v4
-      - run: |
-          mkdir site
-          cp index.html manifest.webmanifest sw.js site/
-          cp -r icons site/
-          touch site/.nojekyll
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm install --no-audit --no-fund && npm run build && touch dist/.nojekyll
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
-        with: { path: site }
+        with: { path: dist }
       - id: deployment
         uses: actions/deploy-pages@v4

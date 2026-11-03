@@ -39,7 +39,7 @@ svg{display:block}
 #off{z-index:9500;color:#666;cursor:pointer}
 #boot .logo,#lock .logo{width:84px;height:84px}
 .bar{width:190px;height:5px;border-radius:3px;background:#333;overflow:hidden}
-.bar i{display:block;height:100%;width:0;background:#fff;border-radius:3px;transition:width 1.7s cubic-bezier(.4,.1,.3,1)}
+.bar i{display:block;height:100%;width:0;background:#fff;border-radius:3px;transition:width .55s cubic-bezier(.4,.1,.3,1)}
 #lock{position:fixed;inset:0;z-index:8000;display:none;flex-direction:column;align-items:center;color:#fff;transition:opacity .5s,transform .5s,filter .5s}
 #lock .lbg{position:absolute;inset:0;filter:blur(18px) brightness(.8);transform:scale(1.1);background-size:cover}
 #lock>*:not(.lbg){position:relative}
@@ -414,6 +414,8 @@ body,html{font-feature-settings:"cv11","ss03";-webkit-font-smoothing:antialiased
 .ftab .x{opacity:.5}.ftab .x:hover{opacity:1}
 .tdots{position:absolute;left:4px;top:4px;display:flex;gap:2px}.tdots i{width:9px;height:9px;border-radius:50%;box-shadow:0 0 0 1.5px var(--win)}
 .ficon{position:relative}
+.window,.wd{contain:layout style}
+#icons .ficon,.di{contain:layout style}
 </style>
 </head>
 <body>
@@ -586,12 +588,13 @@ const WM={wins:[],z:100,active:null,n:0,
  dragSetup(w){const {el,tb}=w;
   tb.addEventListener('pointerdown',e=>{if(e.target.closest('.traffic')||e.button!==0)return;e.preventDefault();
     let sx=e.clientX,sy=e.clientY,ox=el.offsetLeft,oy=el.offsetTop,snap=null,moved=false;const pv=$('#snapPrev');
-    const mv=ev=>{
+    const stepMove=ev=>{
       if(w.max&&!moved){if(Math.abs(ev.clientX-sx)+Math.abs(ev.clientY-sy)<5)return;const r=w.prev,rel=(sx-el.offsetLeft)/el.offsetWidth;el.classList.remove('max');w.max=false;el.style.width=r.w+'px';el.style.height=r.h+'px';ox=ev.clientX-r.w*rel;oy=26;sx=ev.clientX;sy=ev.clientY;w.body.dispatchEvent(new Event('resized'))}
       moved=true;el.style.left=(ox+ev.clientX-sx)+'px';el.style.top=clamp(oy+ev.clientY-sy,26,innerHeight-40)+'px';
       snap=ev.clientY<=3?'full':ev.clientX<=3?'left':ev.clientX>=innerWidth-4?'right':null;
       if(snap){const g=WM.snapGeom(snap);Object.assign(pv.style,{display:'block',left:g.l+'px',top:g.t+'px',width:g.w+'px',height:g.h+'px'})}else pv.style.display='none'};
-    const up=()=>{document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);pv.style.display='none';if(snap)WM.snap(w,snap)};
+    let raf=0,lastEv=null;const mv=ev=>{lastEv=ev;if(!raf)raf=requestAnimationFrame(()=>{raf=0;stepMove(lastEv)})};
+    const up=()=>{if(raf){cancelAnimationFrame(raf);raf=0;stepMove(lastEv)}document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);pv.style.display='none';if(snap)WM.snap(w,snap)};
     document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up)});
   $$('.rz',el).forEach(r=>r.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();this.focus(w);if(w.max){w.max=false;el.classList.remove('max')}const d=r.dataset.d,sx=e.clientX,sy=e.clientY,L=el.offsetLeft,T=el.offsetTop,Wd=el.offsetWidth,Ht=el.offsetHeight;const mw=parseInt(getComputedStyle(el).minWidth),mh=parseInt(getComputedStyle(el).minHeight);
     const ov=h('div',{style:'position:fixed;inset:0;z-index:99998;cursor:'+getComputedStyle(r).cursor});document.body.append(ov);let raf=0,last=null;
@@ -697,7 +700,8 @@ const SCENES=[
  ['Paper',()=>_svg(`<rect width="1600" height="1000" fill="url(#s)"/><circle cx="1180" cy="340" r="320" fill="none" stroke="#fff" stroke-width="2" opacity=".6"/><circle cx="1180" cy="340" r="210" fill="#fff" opacity=".22"/><circle cx="1180" cy="340" r="70" fill="#d9a66a" opacity=".85"/>`,_lg('s',[[0,'#efede8'],[1,'#d8d4cb']]))],
  ['Graphite',()=>_svg(`<rect width="1600" height="1000" fill="url(#s)"/><path d="M0 1000L900 0H1250L350 1000Z" fill="#fff" opacity=".035"/><path d="M500 1000L1400 0H1500L600 1000Z" fill="#fff" opacity=".025"/>`,_lg('s',[[0,'#121418'],[1,'#2a2e36']],1,1))]
 ];
-const WALLS=SCENES.map(([n,f])=>GRAIN+', '+f()+' center/cover');
+class LazyBg{constructor(f){this.f=f}toString(){return this._||(this._=GRAIN+', '+this.f()+' center/cover')}}
+const WALLS=SCENES.map(([n,f])=>new LazyBg(f));
 const WALL_NAMES=SCENES.map(x=>x[0]);
 function wallBg(w){if(typeof w==='string'&&w.startsWith('file:')){try{return `url("${imgSrc(w.slice(5))}") center/cover`}catch{}return WALLS[0]}return WALLS[w]||WALLS[0]}
 const liteOn=()=>DB.set.lite===null?((navigator.hardwareConcurrency||4)<=2||matchMedia('(prefers-reduced-motion: reduce)').matches):DB.set.lite;
@@ -709,6 +713,7 @@ function applyTheme(p){Object.assign(DB.set,p||{});const S=DB.set;const R=docume
 const DOCK=['finder','launchpad','safari','assistant','music','photos','notes','calendar','weather','code','terminal','calculator','settings'];
 const Dock={pinned(){const S=DB.set;if(!S.pinned)S.pinned=[...DOCK];return S.pinned.filter(id=>Apps[id]&&isInstalled(id))},
  render(){const d=$('#dock');const runIds=[...new Set(WM.wins.map(w=>w.app))];const pin=this.pinned();const ids=[...pin,...runIds.filter(i=>!pin.includes(i)&&i!=='preview')];
+  const sig=(DB.set.shell||'mac')+'|'+DB.set.dock+'|'+ids.join()+'|'+runIds.join();if(sig===this._sig&&d.firstChild)return;this._sig=sig;
   d.innerHTML='';const sz=DB.set.dock;
   const mk=id=>{const a=Apps[id];const it=h('div',{class:'di'+(runIds.includes(id)?' run':''),'data-app':id,style:`--s:${sz}px`,onclick:()=>this.click(id)},h('div',{class:'ic',html:a.icon}),h('div',{class:'tip'},a.name),h('div',{class:'dot'}));
    it.addEventListener('contextmenu',e=>{e.preventDefault();e.stopPropagation();const ws=WM.of(id),pinned=pin.includes(id);
@@ -770,7 +775,7 @@ async function power(mode){Player.pause();if(!(await confirmD(mode==='off'?'Shut
   if(mode==='restart'){await sleep(900);startBoot()}}
 $('#off').addEventListener('click',()=>{$('#off').style.display='none';startBoot()});
 function startBoot(){const b=$('#boot');$('#off').style.display='none';b.style.display='flex';b.style.opacity='1';const bar=$('.bar i',b);bar.style.transition='none';bar.style.width='0';b.offsetWidth;bar.style.transition='';requestAnimationFrame(()=>bar.style.width='100%');
-  setTimeout(()=>{$('#os').style.visibility='visible';b.style.opacity='0';lockScreen();setTimeout(()=>b.style.display='none',600)},1900)}
+  setTimeout(()=>{$('#os').style.visibility='visible';b.style.opacity='0';lockScreen();setTimeout(()=>b.style.display='none',400)},700)}
 
 /* ============ file opening ============ */
 function openFile(p){const n=FS.base(p);if(FS.isDir(p))return launch('finder',{path:p});if(isImg(n))return launch('preview',{path:p});if(ext(n)==='sheet')return launch('sheets',{path:p});if(MEDIA_EXT.test(n))return launch('media',{path:p});if(ext(n)==='pdf')return launch('pdf',{path:p});if(/^(js|mjs|html?|css|json|ts|py|sh)$/.test(ext(n)))return launch('code',{path:p});launch('textedit',{path:p})}

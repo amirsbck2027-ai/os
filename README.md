@@ -39,27 +39,40 @@ Finder, Terminal, TextEdit, Notes, Calculator, Safari, Sketch, Preview, Music, P
 - **Voice Memos**: real microphone recording saved into Music.
 - **Tetris** and **Minesweeper**.
 
-## Real device features
-- **Wi-Fi & Network**: real online state, latency, public IP, ISP, location, speed test. Browsers cannot read nearby Wi-Fi names, so the web version says so instead of faking a list. The desktop app lists real networks (nmcli / netsh / system_profiler).
-- **Bluetooth**: real pairing via Web Bluetooth (Chrome, Edge, desktop app): connect, battery level, forget.
-- **Weather** (Open-Meteo), **Camera** (take photos into Pictures), **System Info** (real CPU threads, screen, memory, GPU, storage).
-- **Cloud Sync**: sign in with email, files and settings sync through Supabase (free tier). Schema in `supabase/schema.sql`; set your own project under Settings > Cloud Sync > Advanced.
-- **Backup / Restore**: Settings > Storage exports everything to one JSON file.
+## Real device data (not made up)
+Aura OS reads your actual device wherever the platform allows it, and says so when it cannot.
 
-## Install as an app
-**PWA** (any browser): host the folder over HTTPS (GitHub Pages workflow included: `.github/workflows/pages.yml`), open it, then Settings > General > Install, or the browser's Install / Add to Home Screen. Works offline after first load.
+| | Browser / PWA | Desktop app (Electron) |
+|---|---|---|
+| Battery level, charging | yes (Chrome, Edge, Android) | yes, plus health %, cycles, time left (Linux sysfs, macOS pmset, Windows WMI) |
+| Wi-Fi | online state, latency, IP, ISP, speed test | also the connected network: name, signal, link speed, channel; nearby networks list |
+| Bluetooth | Web Bluetooth pairing (Chrome, Edge) | same, with a native device picker |
+| CPU, memory, GPU, disks, displays | thread count and rounded RAM only | real model, cores, RAM, GPU, disk space, network adapters |
+| Activity Monitor | no per-process data (shows nothing invented) | live CPU load, memory, process list |
+| Camera, microphone, location | yes | yes |
 
-**Desktop app** (Electron, in `desktop/`):
-```
-cd desktop && npm install && npm start      # run
-npm run dist                                # build installer for this OS
-```
-Push a `v*` tag, or run the *Build desktop apps* workflow, to build `.exe` (Windows), `.dmg` (macOS), `.AppImage` / `.deb` (Linux) in GitHub Actions. Builds are unsigned: Windows SmartScreen and macOS Gatekeeper will warn on first run. The Windows build has not been run on a real Windows machine by the author. Linux was tested; macOS and Windows parsers are unit-tested against sample output only.
+Browsers deliberately hide Wi-Fi names and hardware details. Nothing is faked: unavailable data is labelled as such.
 
-The desktop app adds: real nearby Wi-Fi list, a native Bluetooth device picker, and a Safari with no iframe limits (`<webview>`). macOS asks for Location permission before it shows Wi-Fi names.
+## Performance
+- Boot to lock screen in about 0.7 s. Idle CPU about 0.2% of one core, about 3 MB JS heap.
+- `npm run build` minifies to `dist/` (about 86 KB gzip, 71 KB brotli). One file, no framework, no network needed after first load.
+- Service worker serves instantly from cache and refreshes in the background.
+- Work pauses when the tab is hidden or a window is minimized. Dock only re-renders when something visible changes. Window dragging is frame-throttled. Wallpapers are generated lazily as SVG and rasterized once by the browser.
+- Optional "Reduce transparency and motion" (automatic on low-power devices).
+
+## Apps
+Core: Finder (tabs, tags), Terminal, TextEdit, Notes, Calculator, Safari, Preview, Music, Photos, Calendar, Clock, Reminders, Weather, Camera, System Info, Settings, App Store, Aura Assistant.
+Installable from the App Store: Code, Sheets, Maps, Focus, Voice Memos, Sketch, Media (audio and video), PDF Reader, Converter, Vault (password generator), Activity Monitor, Tetris, Minesweeper, 2048, Snake.
+Files can be tagged with colors (Finder context menu, sidebar, and `tag:red` in Spotlight).
+
+## Cloud, backup, install
+- **Cloud Sync**: Supabase, files and settings. Schema in `supabase/schema.sql`; use your own project under Settings > Cloud Sync > Advanced.
+- **Backup / Restore**: Settings > Storage.
+- **PWA**: host `dist/` over HTTPS (workflow included: `.github/workflows/pages.yml`), then Settings > General > Install.
+- **Desktop app**: `cd desktop && npm install && npm start`, or `npm run dist` for an installer. Push a `v*` tag to build .exe, .dmg, .AppImage and .deb in GitHub Actions. Builds are unsigned (Windows SmartScreen and macOS Gatekeeper warn on first run). macOS asks for Location permission before it shows Wi-Fi names.
 
 ## Test
-- Web: `NODE_PATH=$(npm root -g) node tests/e2e.js http://localhost:8765/index.html ./shots` (Playwright, ~220 checks; network services and Supabase are mocked, fake camera, fake Web Bluetooth)
+- Web: `NODE_PATH=$(npm root -g) node tests/e2e.js http://localhost:8765/index.html ./shots` (Playwright, ~250 checks; network services and Supabase are mocked, fake camera, fake Web Bluetooth)
 - Live cloud: `AURA_TEST_EMAIL=... AURA_TEST_PASS=... node tests/cloud-live.js`
-- Desktop parsers: `cd desktop && npm test`
+- Desktop parsers (Wi-Fi, battery, system): `cd desktop && npm test`
 - Desktop app smoke (Linux): `cd desktop && xvfb-run -a node scripts/smoke.js`

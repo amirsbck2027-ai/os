@@ -1,0 +1,14 @@
+{
+  "name": "aura-os",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Aura OS: a desktop operating system that runs in your browser.",
+  "scripts": {
+    "build": "node tools/build.js",
+    "serve": "python3 -m http.server 8765",
+    "test": "node tests/e2e.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}

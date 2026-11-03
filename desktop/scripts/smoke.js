@@ -36,6 +36,28 @@ const ok = (c, m) => { c ? pass++ : fail++; console.log((c ? '  ✓ ' : '  ✗ '
   await page.evaluate(() => { auraNative.bluetooth.select('AA:BB'); auraNative.bluetooth.cancel(); });
   ok(true, 'select/cancel IPC does not throw with no pending request');
 
+  console.log('Real device data');
+  const os = require('os');
+  const info = await page.evaluate(() => auraNative.system.info());
+  ok(info.cpu.cores === os.cpus().length && info.cpu.model === os.cpus()[0].model.replace(/\s+/g, ' ').trim(), 'CPU model and core count match this machine (' + info.cpu.cores + ' cores)');
+  ok(Math.abs(info.mem.total - os.totalmem()) < 1e6 && info.os.hostname === os.hostname(), 'memory total and hostname are real');
+  ok(info.disks.length >= 1 && info.disks[0].total > info.disks[0].free && info.disks[0].free > 0, 'disk size and free space are real');
+  ok(Array.isArray(info.displays) && info.displays[0].w > 0, 'display info present');
+  const st1 = await page.evaluate(() => auraNative.system.stats()); await page.waitForTimeout(600);
+  const st2 = await page.evaluate(() => auraNative.system.stats());
+  ok(typeof st2.cpu === 'number' && st2.cpu >= 0 && st2.cpu <= 100, 'live CPU load is a real percentage (' + st2.cpu + '%)');
+  ok(st2.procs.length >= 2 && st2.procs.some(p => p.type === 'Browser') && st2.memTotal > st2.memUsed, 'process list comes from Electron metrics');
+  ok(await page.evaluate(() => 'battery' in auraNative.system) && (await page.evaluate(() => auraNative.system.battery().then(b => b === null || (typeof b.percent === 'number' && b.percent >= 0 && b.percent <= 100)))), 'battery is null (desktop PC) or a valid percentage');
+  const wc = await page.evaluate(() => auraNative.wifi.current()); ok(wc === null || typeof wc.ssid === 'string' || wc.redacted, 'current Wi-Fi is null or a real connection');
+  await page.evaluate(() => AuraOS.launch('sysinfo')); await page.waitForTimeout(700);
+  let txt = await page.textContent('.window:last-child');
+  ok(txt.includes(info.cpu.model) && txt.includes('Electron ' + info.versions.electron) && !txt.includes('Browser (limited)'), 'System Info shows the real processor and runtime');
+  await page.evaluate(() => AuraOS.WM.wins.slice().forEach(w => AuraOS.WM.close(w)));
+  await page.evaluate(() => AuraOS.launch('monitor')); await page.waitForTimeout(1800);
+  txt = await page.textContent('.window:last-child');
+  ok(txt.includes('Live data from your computer') && txt.includes('CPU load') && /Aura OS\)/.test(txt), 'Activity Monitor shows live CPU, memory and processes');
+  await page.evaluate(() => AuraOS.WM.wins.slice().forEach(w => AuraOS.WM.close(w)));
+
   console.log('Safari uses <webview>');
   await page.evaluate(() => AuraOS.launch('safari', { url: 'about:blank' })); await page.waitForTimeout(500);
   ok(await page.$('.window:last-child webview') !== null, 'Safari renders a webview, not an iframe');
