@@ -19,7 +19,7 @@
   "build": {
     "appId": "os.aura.desktop",
     "productName": "Aura OS",
-    "files": ["main.js", "preload.js", "wifi.js", "app/**/*", "package.json"],
+    "files": ["main.js", "preload.js", "wifi.js", "system.js", "app/**/*", "package.json"],
     "directories": { "output": "dist" },
     "win": { "target": ["nsis", "portable"], "icon": "app/icons/icon-512.png" },
     "mac": { "target": ["dmg", "zip"], "category": "public.app-category.utilities", "icon": "app/icons/icon-512.png", "extendInfo": { "NSLocationUsageDescription": "Aura OS needs Location access to read nearby Wi-Fi network names.", "NSBluetoothAlwaysUsageDescription": "Aura OS connects to your Bluetooth devices.", "NSCameraUsageDescription": "Aura OS Camera app." } },

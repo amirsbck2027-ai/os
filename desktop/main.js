@@ -1,10 +1,11 @@
 // Aura OS desktop shell (Electron). Loads the same index.html as the web version.
-const { app, BrowserWindow, ipcMain, shell, session } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, session, screen } = require('electron');
 const path = require('path');
 const { spawn } = require('child_process');
 const { scan } = require('./wifi');
+const sys = require('./system');
 
-let win = null, btCallback = null;
+let win = null, btCallback = null, prevCpu = null;
 
 function createWindow() {
   win = new BrowserWindow({
@@ -27,6 +28,21 @@ ipcMain.on('aura:version', e => { e.returnValue = app.getVersion(); });
 ipcMain.on('aura:bt-select', (_e, id) => { if (btCallback) { btCallback(String(id)); btCallback = null; } });
 ipcMain.on('aura:bt-cancel', () => { if (btCallback) { btCallback(''); btCallback = null; } });
 ipcMain.handle('aura:wifi-scan', () => scan());
+ipcMain.handle('aura:wifi-current', () => sys.wifiCurrent());
+ipcMain.handle('aura:battery', () => sys.battery());
+ipcMain.handle('aura:sys-info', async () => {
+  let gpu = null;
+  try { const g = await app.getGPUInfo('basic'); const d = (g.gpuDevice || []).find(x => x.active) || (g.gpuDevice || [])[0]; gpu = (g.auxAttributes && g.auxAttributes.glRenderer) || (d && (d.deviceString || `${d.vendorId}:${d.deviceId}`)) || null; } catch {}
+  const displays = screen.getAllDisplays().map(d => ({ w: d.size.width, h: d.size.height, scale: d.scaleFactor, hz: d.displayFrequency, depth: d.colorDepth, internal: d.internal }));
+  return sys.info({ gpu, displays, versions: { electron: process.versions.electron, chrome: process.versions.chrome, node: process.versions.node } });
+});
+// Live numbers for Activity Monitor: real CPU load from the OS, memory, and this app's own processes.
+ipcMain.handle('aura:sys-stats', () => {
+  const cur = sys.cpuTimes(require('os').cpus()), load = sys.cpuLoad(prevCpu, cur); prevCpu = cur;
+  const total = require('os').totalmem(), free = require('os').freemem();
+  const procs = app.getAppMetrics().map(m => ({ pid: m.pid, type: m.type, name: m.name || m.serviceName || m.type, cpu: Math.round(m.cpu.percentCPUUsage * 10) / 10, memKB: m.memory.workingSetSize }));
+  return { cpu: load, memUsed: total - free, memTotal: total, procs, uptime: require('os').uptime() };
+});
 ipcMain.handle('aura:open-external', (_e, url) => { if (/^https?:\/\//i.test(String(url))) return shell.openExternal(String(url)); });
 ipcMain.handle('aura:open-network-settings', async () => {
   if (process.platform === 'win32') return shell.openExternal('ms-settings:network-wifi');

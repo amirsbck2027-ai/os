@@ -7,7 +7,8 @@ const call = (ch, ...a) => ipcRenderer.invoke(ch, ...a).catch(e => { throw new E
 contextBridge.exposeInMainWorld('auraNative', {
   platform: process.platform,
   version: ipcRenderer.sendSync('aura:version'),
-  wifi: { scan: () => call('aura:wifi-scan') },
+  wifi: { scan: () => call('aura:wifi-scan'), current: () => call('aura:wifi-current') },
+  system: { info: () => call('aura:sys-info'), stats: () => call('aura:sys-stats'), battery: () => call('aura:battery') },
   bluetooth: {
     // Called with the live list of nearby devices while the picker is open. Returns an unsubscribe fn.
     onList(cb) { const h = (_e, list) => cb(list); ipcRenderer.on('aura:bt-list', h); return () => ipcRenderer.removeListener('aura:bt-list', h); },

@@ -232,7 +232,7 @@ canvas{display:block}
 .wt .ck{width:15px;height:15px;border-radius:50%;border:1.5px solid var(--accent);flex:none}
 .wt.done .ck{background:var(--accent)}.wt.done span:last-child{text-decoration:line-through;opacity:.5}
 .mbar{height:6px;border-radius:3px;background:var(--line);overflow:hidden}.mbar i{display:block;height:100%;background:var(--accent)}
-.art{width:46px;height:46px;border-radius:10px;background:linear-gradient(135deg,#ff375f,#bf5af2);flex:none}
+.art{width:46px;height:46px;border-radius:10px;background:linear-gradient(135deg,#ef6a7a,#8f6bff);flex:none}
 .wh{font-weight:700;margin-bottom:6px}
 #nc{position:absolute;top:26px;right:0;bottom:0;width:360px;background:var(--glass);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);padding:14px;overflow:auto;transform:translateX(105%);visibility:hidden;transition:transform .3s cubic-bezier(.3,.7,.3,1),visibility 0s .3s;z-index:55000;box-shadow:-10px 0 40px rgba(0,0,0,.25);display:flex;flex-direction:column;gap:12px}
 #nc.show{transform:none;visibility:visible;transition-delay:0s}
@@ -382,6 +382,38 @@ html.linux #widgets{left:86px}
 .msg.me{align-self:flex-end;background:var(--accent);color:#fff;border-bottom-right-radius:4px}
 .msg.ai{align-self:flex-start;background:var(--hover);border-bottom-left-radius:4px}
 .chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 8px}.chip{border:1px solid var(--line);border-radius:14px;padding:3px 10px;font-size:12px;cursor:default;background:var(--field)}.chip:hover{background:var(--hover)}
+
+/* ===== skin: calmer chrome ===== */
+:root{--font:"Inter","SF Pro Text",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif;
+ --glass:rgba(250,250,251,.66);--glass-strong:rgba(252,252,253,.86);--text:#1c1d21;--text2:#6a6e78;--line:rgba(20,22,30,.09);--hover:rgba(20,22,30,.055);--side:rgba(244,244,246,.72);
+ --shadow:0 0 0 1px rgba(20,22,30,.16),0 18px 44px rgba(10,12,20,.28),0 3px 10px rgba(10,12,20,.12)}
+:root.dark{--glass:rgba(32,33,38,.66);--glass-strong:rgba(36,37,43,.88);--text:#ececf0;--text2:#9a9ea9;--line:rgba(255,255,255,.09);--hover:rgba(255,255,255,.07);--win:#1d1e22;--side:rgba(30,31,36,.78);--field:#27282e;
+ --shadow:0 0 0 1px rgba(255,255,255,.1),0 18px 44px rgba(0,0,0,.55),0 3px 10px rgba(0,0,0,.3)}
+body,html{font-feature-settings:"cv11","ss03";-webkit-font-smoothing:antialiased;letter-spacing:-.006em}
+#menubar{height:26px;background:var(--glass);box-shadow:0 1px 0 var(--line);font-size:12.5px}
+.window{border-radius:11px}
+.window.inactive{box-shadow:0 0 0 1px var(--line),0 8px 24px rgba(10,12,20,.18)}
+.titlebar{height:38px;background:var(--glass-strong);box-shadow:0 1px 0 var(--line)}
+.titlebar .ttl{font-weight:600;font-size:12.5px;opacity:.82}
+.traffic i{width:12px;height:12px;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.18)}
+#dock{border-radius:20px;padding:6px 8px;background:var(--glass);box-shadow:0 0 0 1px rgba(255,255,255,.28),0 0 0 2px rgba(10,12,20,.06),0 12px 32px rgba(10,12,20,.28)}
+.di .ic{border-radius:23%;box-shadow:0 1px 0 rgba(255,255,255,.25) inset,0 3px 8px rgba(10,12,20,.32)}
+.di .tip{font-size:12px;padding:3px 10px;border-radius:7px}
+.wd{background:var(--glass);border-radius:18px;box-shadow:0 0 0 1px rgba(255,255,255,.22),0 10px 28px rgba(10,12,20,.2)}
+.dd,.sheet,.toast,#cc,.spbox{box-shadow:0 0 0 1px var(--line),0 16px 48px rgba(10,12,20,.32)}
+.card{background:var(--hover);border-radius:10px}
+.btn{border-radius:7px}.btn.pri{background:var(--accent)}
+.sb svg{fill:var(--accent)}
+#lock .time{font-weight:200;letter-spacing:-3px;font-size:118px}
+#lock .date{font-weight:500;letter-spacing:.2px;opacity:.85}
+.avatar{background:linear-gradient(160deg,#9aa4b8,#667086)}
+
+.ftabs{display:flex;gap:2px;padding:4px 8px 0;background:var(--hover);border-bottom:1px solid var(--line);overflow:hidden}
+.ftab{display:flex;align-items:center;gap:8px;padding:4px 10px;border-radius:7px 7px 0 0;font-size:12px;max-width:170px;cursor:default;color:var(--text2)}
+.ftab span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ftab.sel{background:var(--win);color:var(--text);box-shadow:0 0 0 1px var(--line)}.ftab.add{padding:4px 9px;font-size:15px;line-height:1}
+.ftab .x{opacity:.5}.ftab .x:hover{opacity:1}
+.tdots{position:absolute;left:4px;top:4px;display:flex;gap:2px}.tdots i{width:9px;height:9px;border-radius:50%;box-shadow:0 0 0 1.5px var(--win)}
+.ficon{position:relative}
 </style>
 </head>
 <body>
@@ -425,7 +457,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 /* ============ storage / filesystem ============ */
 const KEY='aura-os-v1';let HOME='/Users/user';
 const dir=()=>({t:'d',c:{}}),file=(d='')=>({t:'f',d,m:Date.now()});
-function defSet(){return {shell:'mac',bt:[],loc:null,unit:'c',dark:false,wall:0,accent:'#0a84ff',name:'User',pass:'',dock:56,volume:60,bright:100,wifi:true,widgets:true,dnd:false,h24:false,lite:null,pinned:null,cal:{},todos:[{t:'Try every app',d:false},{t:'Customize the wallpaper',d:false},{t:'Open Music and press play',d:false}],alarms:[]}}
+function defSet(){return {shell:'mac',bt:[],loc:null,unit:'c',dark:false,wall:0,accent:'#4c8dff',name:'User',pass:'',dock:56,volume:60,bright:100,wifi:true,widgets:true,dnd:false,h24:false,lite:null,pinned:null,cal:{},todos:[{t:'Try every app',d:false},{t:'Customize the wallpaper',d:false},{t:'Open Music and press play',d:false}],alarms:[]}}
 function samplePhotos(node){const P=[['Sunrise','#ff9a5a','#ff3d81','#2d1b69'],['Lagoon','#7ae7ff','#2b8cff','#062b5b'],['Meadow','#fff3a8','#7ddc6b','#0b5d3b'],['Dusk','#ffb36b','#a855f7','#1b1340'],['Glacier','#e0f7ff','#7fb7ff','#27406e'],['Ember','#ffd36b','#ff5a36','#3a0f1f']];
  P.forEach(([n,a,b,c],i)=>{node.c[n+'.svg']={t:'f',m:Date.now(),d:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c}"/><stop offset=".55" stop-color="${b}"/><stop offset="1" stop-color="${a}"/></linearGradient></defs><rect width="1200" height="800" fill="url(#g)"/><circle cx="${300+i*120}" cy="${430-i*20}" r="${70+i*6}" fill="${a}" opacity=".9"/><path d="M0 800V560Q200 430 380 560T760 540T1200 520V800z" fill="${c}" opacity=".75"/><path d="M0 800V650Q260 560 520 650T1200 630V800z" fill="${c}"/></svg>`}})}
 function mkHome(key){const mk=p=>{let n=DB.fs;for(const s of p.split('/').filter(Boolean)){n=n.c[s]=n.c[s]||dir()}return n};['Desktop','Documents','Downloads','Pictures','Music','Documents/Notes'].forEach(d=>mk('/Users/'+key+'/'+d));const pn=mk('/Users/'+key+'/Pictures');if(!Object.keys(pn.c).length)samplePhotos(pn);return mk('/Users/'+key)}
@@ -484,7 +516,7 @@ const ext=n=>(n.match(/\.([^.]+)$/)||[])[1]?.toLowerCase()||'';
 const Clip={p:[],cut:false};
 function pasteHere(p){if(!Clip.p.length)return toast('Finder','Nothing to paste');Clip.p.forEach(s=>{try{Clip.cut?FS.mv(s,p):FS.cp(s,p)}catch(e){toast('Error',e.message)}});if(Clip.cut)Clip.p=[]}
 function putBack(p){const n=FS.get(p);if(!n)return;const o=n.o;delete n.o;const dst=o&&FS.isDir(FS.dirname(o))?FS.dirname(o):HOME+'/Documents';try{FS.mv(p,dst)}catch(e){toast('Error',e.message)}}
-function importList(dirp,files){[...files].forEach(f=>{if(f.size>3e6)return toast('Error',f.name+' is too large (3 MB max)');const r=new FileReader();const txt=f.type.startsWith('text/')||/\.(txt|md|json|js|css|html|csv|xml|log)$/i.test(f.name);r.onload=()=>{try{FS.write(FS.join(dirp,FS.unique(dirp,f.name)),r.result);toast('Imported',f.name)}catch(e){toast('Error',e.message)}};txt?r.readAsText(f):r.readAsDataURL(f)})}
+function importList(dirp,files){[...files].forEach(f=>{if(f.size>3e6)return toast('Error',f.name+' is too large (3 MB max)');const r=new FileReader();const txt=(f.type.startsWith('text/')||/\.(txt|md|json|js|css|html|csv|xml|log|sheet|py|sh|ts)$/i.test(f.name))&&!/\.pdf$/i.test(f.name);r.onload=()=>{try{FS.write(FS.join(dirp,FS.unique(dirp,f.name)),r.result);toast('Imported',f.name)}catch(e){toast('Error',e.message)}};txt?r.readAsText(f):r.readAsDataURL(f)})}
 function importFiles(dirp){const inp=h('input',{type:'file',multiple:true,style:'display:none'});inp.onchange=()=>importList(dirp,inp.files);document.body.append(inp);inp.click();setTimeout(()=>inp.remove(),60000)}
 function download(p){const n=FS.get(p);if(!n||n.t!=='f')return toast('Error','Only files can be downloaded');let blob;const d=n.d;if(d.startsWith('data:')&&d.includes(';base64,')){const mime=d.slice(5,d.indexOf(';'));const bin=atob(d.split(',')[1]);const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);blob=new Blob([u],{type:mime})}else blob=new Blob([d],{type:'text/plain'});const a=h('a',{href:URL.createObjectURL(blob),download:FS.base(p)});document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000)}
 const _img=new Map();
@@ -647,13 +679,26 @@ function buildCC(){const cc=$('#cc');cc.innerHTML='';const S=DB.set;
 function applyBright(){$('#bright').style.opacity=(100-DB.set.bright)/100*.85}
 
 /* ============ theme ============ */
-const WALLS=[
- 'radial-gradient(at 20% 15%,#ff9ad5 0,transparent 45%),radial-gradient(at 85% 20%,#7d8bff 0,transparent 50%),radial-gradient(at 70% 90%,#44d1ff 0,transparent 55%),linear-gradient(135deg,#6a5cff,#c471ed)',
- 'radial-gradient(at 15% 80%,#ffd37a 0,transparent 50%),radial-gradient(at 80% 20%,#ff6f91 0,transparent 55%),linear-gradient(160deg,#ff9a5a,#c13584)',
- 'radial-gradient(at 80% 80%,#2af598 0,transparent 50%),radial-gradient(at 10% 10%,#009efd 0,transparent 55%),linear-gradient(135deg,#0f2b5b,#0b6e8a)',
- 'radial-gradient(at 30% 20%,#3a3d6e 0,transparent 55%),radial-gradient(at 80% 80%,#7b2ff7 0,transparent 55%),linear-gradient(160deg,#0b0b1a,#1d1240)',
- 'radial-gradient(at 70% 20%,#fff3b0 0,transparent 45%),linear-gradient(180deg,#7fc8ff 0%,#a7e0ff 45%,#ffd9a0 100%)',
- 'linear-gradient(135deg,#232526,#414345)'];
+/* wallpapers: procedural scenes (SVG) + fine grain, rendered once by the browser */
+const _rng=a=>()=>(a=(a*16807)%2147483647)/2147483647;
+const _peaks=(W,H,base,amp,seed,n)=>{const r=_rng(seed);let d=`M0 ${H}L0 ${base}`,y=base;for(let i=1;i<=n;i++){y=base+(r()-.5)*2*amp;d+=`L${(W*(i-.5+r()*.5)/n).toFixed(0)} ${y.toFixed(0)}`}return d+`L${W} ${base}L${W} ${H}Z`};
+const _dune=(W,H,base,amp,ph)=>{let d=`M0 ${H}L0 ${base}`;for(let x=0;x<=W;x+=40)d+=`L${x} ${(base+Math.sin(x/W*Math.PI*2+ph)*amp+Math.sin(x/W*Math.PI*5+ph*2)*amp*.3).toFixed(0)}`;return d+`L${W} ${H}Z`};
+const _svg=(body,defs='')=>'url("data:image/svg+xml,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice"><defs>${defs}</defs>${body}</svg>`)+'")';
+const _lg=(id,stops,x2=0,y2=1)=>`<linearGradient id="${id}" x1="0" y1="0" x2="${x2}" y2="${y2}">${stops.map(([o,c,a])=>`<stop offset="${o}" stop-color="${c}"${a!=null?` stop-opacity="${a}"`:''}/>`).join('')}</linearGradient>`;
+const _rg=(id,stops)=>`<radialGradient id="${id}">${stops.map(([o,c,a])=>`<stop offset="${o}" stop-color="${c}" stop-opacity="${a}"/>`).join('')}</radialGradient>`;
+const GRAIN='url("data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .55 0"/></filter><rect width="160" height="160" filter="url(#n)"/></svg>')+'") 0 0/160px';
+const _stars=(n,seed)=>{const r=_rng(seed);let o='';for(let i=0;i<n;i++)o+=`<circle cx="${(r()*1600)|0}" cy="${(r()*520)|0}" r="${(.5+r()*1.1).toFixed(1)}" fill="#fff" opacity="${(.25+r()*.6).toFixed(2)}"/>`;return o};
+const SCENES=[
+ ['Dusk Ridge',()=>_svg(`<rect width="1600" height="1000" fill="url(#s)"/><circle cx="1130" cy="560" r="300" fill="url(#g)"/><path d="${_peaks(1600,1000,610,50,11,9)}" fill="#8e8fb8" opacity=".55"/><path d="${_peaks(1600,1000,690,70,23,8)}" fill="#5d5f93" opacity=".8"/><path d="${_peaks(1600,1000,790,70,37,7)}" fill="#33346a"/><path d="${_peaks(1600,1000,880,50,41,6)}" fill="#1b1c43"/>`,_lg('s',[[0,'#1d2548'],[.5,'#6b6aa6'],[.78,'#f0a98a'],[1,'#f7d3a6']])+_rg('g',[[0,'#fff1c9',.9],[1,'#fff1c9',0]]))],
+ ['Dunes',()=>_svg(`<rect width="1600" height="1000" fill="url(#s)"/><circle cx="1240" cy="330" r="90" fill="#fff6dc" opacity=".9"/><path d="${_dune(1600,1000,560,40,.6)}" fill="#e8b27a"/><path d="${_dune(1600,1000,680,50,2.1)}" fill="#d28e5b"/><path d="${_dune(1600,1000,800,45,4)}" fill="#b4693f"/><path d="${_dune(1600,1000,910,35,5.4)}" fill="#8a4a2e"/>`,_lg('s',[[0,'#f7e3c2'],[1,'#f0b98d']]))],
+ ['Aurora',()=>_svg(`<rect width="1600" height="1000" fill="url(#s)"/>${_stars(120,7)}<path d="M0 360C300 180 520 520 820 300S1300 120 1600 260V420C1300 300 1100 560 800 440S280 300 0 520Z" fill="url(#a1)" opacity=".75"/><path d="M0 460C320 300 560 600 880 420S1340 280 1600 400V500C1320 420 1120 640 860 540S300 440 0 600Z" fill="url(#a2)" opacity=".5"/><path d="${_peaks(1600,1000,760,70,5,10)}" fill="#07151c"/><path d="${_peaks(1600,1000,860,60,9,8)}" fill="#030b10"/>`,_lg('s',[[0,'#050d16'],[1,'#0b2a30']])+_lg('a1',[[0,'#3df5b0',0],[.5,'#3df5b0',.9],[1,'#3a7bff',0]],1,0)+_lg('a2',[[0,'#7a5cff',0],[.5,'#37e6c8',.8],[1,'#37e6c8',0]],1,0))],
+ ['Deep Sea',()=>_svg(`<rect width="1600" height="1000" fill="url(#s)"/><path d="M300 0L520 0L860 1000L420 1000Z" fill="#9be8ff" opacity=".07"/><path d="M820 0L980 0L1500 1000L1000 1000Z" fill="#9be8ff" opacity=".06"/><path d="M1180 0L1260 0L1600 700L1600 1000L1440 1000Z" fill="#9be8ff" opacity=".05"/><path d="${_dune(1600,1000,900,25,1)}" fill="#041a2b"/><path d="${_dune(1600,1000,950,18,3)}" fill="#020f1a"/>`,_lg('s',[[0,'#0e6a86'],[.55,'#0a3e5e'],[1,'#051c30']]))],
+ ['Fog Forest',()=>{const r=_rng(3);let t='';for(let l=0;l<3;l++){const y=520+l*130,c=['#7d9b92','#4f7468','#244a42'][l];let d=`M0 1000L0 ${y}`;for(let x=0;x<=1600;x+=26){const h=40+r()*70+l*18;d+=`L${x} ${y}L${x+13} ${y-h}L${x+26} ${y}`}t+=`<path d="${d}L1600 1000Z" fill="${c}"/><rect y="${y-60}" width="1600" height="180" fill="url(#f)" opacity=".55"/>`}return _svg(`<rect width="1600" height="1000" fill="url(#s)"/>${t}`,_lg('s',[[0,'#cfe0d8'],[1,'#a9c4b8']])+_lg('f',[[0,'#e9f1ec',0],[.5,'#e9f1ec',.9],[1,'#e9f1ec',0]]))}],
+ ['Paper',()=>_svg(`<rect width="1600" height="1000" fill="url(#s)"/><circle cx="1180" cy="340" r="320" fill="none" stroke="#fff" stroke-width="2" opacity=".6"/><circle cx="1180" cy="340" r="210" fill="#fff" opacity=".22"/><circle cx="1180" cy="340" r="70" fill="#d9a66a" opacity=".85"/>`,_lg('s',[[0,'#efede8'],[1,'#d8d4cb']]))],
+ ['Graphite',()=>_svg(`<rect width="1600" height="1000" fill="url(#s)"/><path d="M0 1000L900 0H1250L350 1000Z" fill="#fff" opacity=".035"/><path d="M500 1000L1400 0H1500L600 1000Z" fill="#fff" opacity=".025"/>`,_lg('s',[[0,'#121418'],[1,'#2a2e36']],1,1))]
+];
+const WALLS=SCENES.map(([n,f])=>GRAIN+', '+f()+' center/cover');
+const WALL_NAMES=SCENES.map(x=>x[0]);
 function wallBg(w){if(typeof w==='string'&&w.startsWith('file:')){try{return `url("${imgSrc(w.slice(5))}") center/cover`}catch{}return WALLS[0]}return WALLS[w]||WALLS[0]}
 const liteOn=()=>DB.set.lite===null?((navigator.hardwareConcurrency||4)<=2||matchMedia('(prefers-reduced-motion: reduce)').matches):DB.set.lite;
 function applyTheme(p){Object.assign(DB.set,p||{});const S=DB.set;const R=document.documentElement;R.classList.toggle('dark',!!S.dark);R.classList.toggle('win',S.shell==='win');R.classList.toggle('linux',S.shell==='linux');R.classList.toggle('lite',!!liteOn());R.style.setProperty('--accent',S.accent);
@@ -662,7 +707,7 @@ function applyTheme(p){Object.assign(DB.set,p||{});const S=DB.set;const R=docume
 
 /* ============ dock ============ */
 const DOCK=['finder','launchpad','safari','assistant','music','photos','notes','calendar','weather','code','terminal','calculator','settings'];
-const Dock={pinned(){const S=DB.set;if(!S.pinned)S.pinned=[...DOCK];return S.pinned.filter(id=>Apps[id])},
+const Dock={pinned(){const S=DB.set;if(!S.pinned)S.pinned=[...DOCK];return S.pinned.filter(id=>Apps[id]&&isInstalled(id))},
  render(){const d=$('#dock');const runIds=[...new Set(WM.wins.map(w=>w.app))];const pin=this.pinned();const ids=[...pin,...runIds.filter(i=>!pin.includes(i)&&i!=='preview')];
   d.innerHTML='';const sz=DB.set.dock;
   const mk=id=>{const a=Apps[id];const it=h('div',{class:'di'+(runIds.includes(id)?' run':''),'data-app':id,style:`--s:${sz}px`,onclick:()=>this.click(id)},h('div',{class:'ic',html:a.icon}),h('div',{class:'tip'},a.name),h('div',{class:'dot'}));
@@ -682,15 +727,16 @@ Apps.trash={name:'Trash',icon:ICONS.trash,hidden:true};Apps.launchpad={name:'Lau
 /* ============ overlays ============ */
 function closeOverlays(){['#launchpad','#spot','#cc','#mc','#nc','#start'].forEach(q=>$(q).classList.remove('show'))}
 function toggleLaunchpad(){const lp=$('#launchpad'),on=!lp.classList.contains('show');closeOverlays();if(!on)return;lp.classList.add('show');$('#lpq').value='';renderLP();$('#lpq').focus()}
-function renderLP(){const q=$('#lpq').value.toLowerCase(),g=$('#lpgrid');g.innerHTML='';Object.entries(Apps).filter(([id,a])=>a.icon&&!a.hidden&&a.name.toLowerCase().includes(q)).forEach(([id,a])=>g.append(h('div',{class:'lpi',onclick:()=>launch(id)},h('div',{class:'ic',html:a.icon}),a.name)))}
+function renderLP(){const q=$('#lpq').value.toLowerCase(),g=$('#lpgrid');g.innerHTML='';Object.entries(Apps).filter(([id,a])=>a.icon&&!a.hidden&&isInstalled(id)&&a.name.toLowerCase().includes(q)).forEach(([id,a])=>g.append(h('div',{class:'lpi',onclick:()=>launch(id)},h('div',{class:'ic',html:a.icon}),a.name)))}
 $('#lpq').addEventListener('input',renderLP);$('#launchpad').addEventListener('mousedown',e=>{if(e.target.id==='launchpad'||e.target.id==='lpgrid')closeOverlays()});
 let spSel=0,spItems=[];
 function toggleSpot(){const s=$('#spot'),on=!s.classList.contains('show');closeOverlays();if(!on)return;s.classList.add('show');const q=$('#spq');q.value='';spSearch();q.focus()}
 function openPath(p){if(FS.isDir(p))launch('finder',{path:p});else openFile(p)}
 function spSearch(){const q=$('#spq').value.trim(),ql=q.toLowerCase(),r=$('#spr');r.innerHTML='';spItems=[];spSel=0;if(!q){return}
   if(/^[\d+\-*/().%\s^]+$/.test(q)&&/\d/.test(q)&&/[+\-*/%^]/.test(q)){try{const v=Function('"use strict";return ('+q.replace(/\^/g,'**')+')')();if(isFinite(v))spItems.push({icon:ICONS.calculator,label:String(+v.toPrecision(12)),sub:'Calculator',fn:()=>launch('calculator')})}catch{}}
+  {const tm=ql.match(/^tag:?\s*(\w+)$/);if(tm&&TAGS[tm[1]])tagged(tm[1]).slice(0,8).forEach(e=>spItems.push({icon:e.node.t==='d'?folderSVG:fileSVG(e.name),label:e.name,sub:'Tag: '+tm[1]+' · '+e.path,fn:()=>openPath(e.path)}))}
   if(!spItems.length){const as=Assist.parse(q);if(as&&!as.quiet)spItems.push({icon:ICONS.assistant,label:as.label,sub:'Aura Assistant',fn:()=>as.fn().then(r=>toast('Aura',r),e=>toast('Error',e.message))})}
-  Object.entries(Apps).filter(([id,a])=>a.icon&&!a.hidden&&a.name.toLowerCase().includes(ql)).forEach(([id,a])=>spItems.push({icon:a.icon,label:a.name,sub:'Application',fn:()=>launch(id)}));
+  Object.entries(Apps).filter(([id,a])=>a.icon&&!a.hidden&&isInstalled(id)&&a.name.toLowerCase().includes(ql)).forEach(([id,a])=>spItems.push({icon:a.icon,label:a.name,sub:'Application',fn:()=>launch(id)}));
   let n=0;try{FS.walk('/',e=>{if(n<8&&e.name.toLowerCase().includes(ql)){n++;spItems.push({icon:e.node.t==='d'?folderSVG:fileSVG(e.name),label:e.name,sub:e.path,fn:()=>openPath(e.path)})}})}catch{}
   spItems.push({icon:ICONS.safari,label:`Search the web for “${q}”`,sub:'Safari',fn:()=>launch('safari',{url:q})});
   spItems.forEach((it,i)=>r.append(h('div',{class:'sr'+(i===0?' sel':''),onclick:()=>{closeOverlays();it.fn()}},h('div',{class:'ic',html:it.icon}),it.label,h('small',0,it.sub))))}
@@ -705,7 +751,7 @@ function prepLock(){const S=DB.set;$('#lock .avatar').textContent=(S.name[0]||'U
   if(others.length)u.append(h('div',{style:'font-size:11px;opacity:.7;width:100%;text-align:center'},'Switch user'));
   others.forEach(k=>u.append(h('div',{class:'avatar',title:DB.users[k].set.name,'data-user':k,onclick:e=>{e.stopPropagation();DB.current=k;save();loadUser()}},(DB.users[k].set.name[0]||'U').toUpperCase())));
   tick();setTimeout(()=>(S.pass?pw:$('#lock')).focus?.(),50)}
-function loadUser(){HOME='/Users/'+DB.current;if(!FS.isDir(HOME))mkHome(DB.current);applyTheme();renderDesktop();buildStatus();buildCC();Widgets.build();Dock.render();MenuBar.render();prepLock()}
+function loadUser(){HOME='/Users/'+DB.current;migrateInstalled();if(!FS.isDir(HOME))mkHome(DB.current);applyTheme();renderDesktop();buildStatus();buildCC();Widgets.build();Dock.render();MenuBar.render();prepLock()}
 function logout(){[...WM.wins].forEach(w=>WM.close(w));Player.pause();closeOverlays();lockScreen()}
 const hashOld=s=>{let x=5381;for(const c of s)x=((x<<5)+x+c.charCodeAt(0))>>>0;return x.toString(36)};
 const hx=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
@@ -727,10 +773,10 @@ function startBoot(){const b=$('#boot');$('#off').style.display='none';b.style.d
   setTimeout(()=>{$('#os').style.visibility='visible';b.style.opacity='0';lockScreen();setTimeout(()=>b.style.display='none',600)},1900)}
 
 /* ============ file opening ============ */
-function openFile(p){const n=FS.base(p);if(FS.isDir(p))return launch('finder',{path:p});if(isImg(n))return launch('preview',{path:p});if(ext(n)==='sheet')return launch('sheets',{path:p});if(/^(js|mjs|html?|css|json|ts|py|sh)$/.test(ext(n)))return launch('code',{path:p});launch('textedit',{path:p})}
+function openFile(p){const n=FS.base(p);if(FS.isDir(p))return launch('finder',{path:p});if(isImg(n))return launch('preview',{path:p});if(ext(n)==='sheet')return launch('sheets',{path:p});if(MEDIA_EXT.test(n))return launch('media',{path:p});if(ext(n)==='pdf')return launch('pdf',{path:p});if(/^(js|mjs|html?|css|json|ts|py|sh)$/.test(ext(n)))return launch('code',{path:p});launch('textedit',{path:p})}
 
 /* ============ desktop ============ */
-function fileIcon(e,cls=''){const n=e.node;const ic=n.t==='d'?h('span',{html:folderSVG,style:'display:contents'}):(isImg(e.name)?h('img',{src:imgSrc(e.path),loading:'lazy',decoding:'async'}):h('span',{html:fileSVG(e.name),style:'display:contents'}));return h('div',{class:'ficon '+cls,'data-path':e.path,draggable:'true'},ic,h('div',{class:'lbl'},e.name))}
+function fileIcon(e,cls=''){const n=e.node;const ic=n.t==='d'?h('span',{html:folderSVG,style:'display:contents'}):(isImg(e.name)?h('img',{src:imgSrc(e.path),loading:'lazy',decoding:'async'}):h('span',{html:fileSVG(e.name),style:'display:contents'}));return h('div',{class:'ficon '+cls,'data-path':e.path,draggable:'true'},ic,tagDots(n),h('div',{class:'lbl'},e.name))}
 function renderDesktop(){const c=$('#icons');c.innerHTML='';const D=HOME+'/Desktop';
   c.append(h('div',{class:'ficon',style:'color:#fff',ondblclick:()=>launch('finder',{path:'/'}),onclick:e=>selOne(e.currentTarget)},h('span',{html:`<svg viewBox="0 0 64 64" style="width:54px;height:54px"><rect x="8" y="12" width="48" height="34" rx="4" fill="#9aa1ad"/><rect x="11" y="15" width="42" height="28" rx="2" fill="#2b2f3a"/><rect x="8" y="48" width="48" height="8" rx="3" fill="#c7ccd6"/><circle cx="48" cy="52" r="1.6" fill="#34c759"/></svg>`,style:'display:contents'}),h('div',{class:'lbl'},'Aura HD')));
   try{FS.ls(D).forEach(e=>{const f=fileIcon(e);f.addEventListener('click',ev=>{ev.stopPropagation();selOne(f)});f.addEventListener('dblclick',()=>openPath(e.path));f.addEventListener('contextmenu',ev=>{ev.preventDefault();ev.stopPropagation();selOne(f);showMenu(ev.clientX,ev.clientY,[{label:'Open',fn:()=>openPath(e.path)},{label:'Rename…',fn:()=>renameItem(e.path)},'-',{label:'Move to Trash',fn:()=>FS.trash(e.path)}])});
@@ -772,17 +818,25 @@ Apps.finder={name:'Finder',icon:ICONS.finder,w:780,h:490,
   const crumb=h('div',{style:'font-weight:600;flex:1;margin-left:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'});
   const vbtn=toolbarBtn('☰',()=>{view=view==='grid'?'list':'grid';render()},'Toggle view'),nf=toolbarBtn('＋ Folder',()=>newItem(path,'d'),'New folder'),empty=toolbarBtn('Empty Trash',async()=>{if(await confirmD('Empty Trash?','This cannot be undone.')){FS.ls('/Trash').forEach(e=>FS.rm(e.path))}});
   const search=h('input',{class:'field search',placeholder:'Search',style:'width:140px',oninput:()=>render()});
-  const imp=toolbarBtn('Import…',()=>importFiles(path),'Import files from your computer');main.append(h('div',{class:'toolbar'},back,fwd,up,crumb,nf,imp,empty,vbtn,search),content,status);
+  const imp=toolbarBtn('Import…',()=>importFiles(path),'Import files from your computer'),ntab=toolbarBtn('New Tab',()=>newTab(),'New tab (Ctrl+T)');main.append(h('div',{class:'toolbar'},back,fwd,up,crumb,nf,imp,empty,ntab,vbtn,search),content,status);
   win.body.style.flexDirection='row';win.body.append(side,main);
-  function go(p,push=true){if(!FS.isDir(p))return;path=p;sel.clear();if(push){hist=hist.slice(0,idx+1);hist.push(p);idx=hist.length-1}search.value='';render()}
-  function nav(i){if(i<0||i>=hist.length)return;idx=i;path=hist[i];sel.clear();render()}
+  let tagView=null;const tabs=[{path,hist,idx,sel}];let tcur=0;const tabbar=h('div',{class:'ftabs',style:'display:none'});main.prepend(tabbar);
+  const tname=(p,tv)=>tv?'Tag: '+tv:p==='/'?'Aura HD':FS.base(p);
+  function saveTab(){tabs[tcur]={path,hist,idx,sel,tagView}}
+  function loadTab(i){tcur=i;({path,hist,idx,sel,tagView}=tabs[i]);render()}
+  function renderTabs(){tabbar.style.display=tabs.length>1?'flex':'none';tabbar.innerHTML='';tabs.forEach((t,i)=>{const c=i===tcur?{path,tagView}:t;tabbar.append(h('div',{class:'ftab'+(i===tcur?' sel':''),onclick:()=>{if(i!==tcur){saveTab();loadTab(i)}}},h('span',0,tname(c.path,c.tagView)),h('i',{class:'x',title:'Close tab',onclick:e=>{e.stopPropagation();closeTab(i)}},'×')))});tabbar.append(h('div',{class:'ftab add',title:'New tab',onclick:()=>newTab()},'+'))}
+  function newTab(){saveTab();tabs.push({path,hist:[path],idx:0,sel:new Set(),tagView:null});loadTab(tabs.length-1)}
+  function closeTab(i){if(tabs.length<2)return;saveTab();tabs.splice(i,1);loadTab(Math.max(0,Math.min(i<=tcur?tcur-1:tcur,tabs.length-1)))}
+  win.finderTabs=()=>({count:tabs.length,cur:tcur});
+  function go(p,push=true){if(!FS.isDir(p))return;tagView=null;path=p;sel.clear();if(push){hist=hist.slice(0,idx+1);hist.push(p);idx=hist.length-1}search.value='';render()}
+  function nav(i){if(i<0||i>=hist.length)return;tagView=null;idx=i;path=hist[i];sel.clear();render()}
   const places=[['Home',HOME,'home'],['Desktop',HOME+'/Desktop','folder'],['Documents',HOME+'/Documents','folder'],['Downloads',HOME+'/Downloads','folder'],['Pictures',HOME+'/Pictures','folder'],['Music',HOME+'/Music','folder'],['Aura HD','/','app'],['Trash','/Trash','trash']];
   function renderSide(){side.innerHTML='';side.append(h('h6',0,'Favorites'));places.forEach(([n,p,i])=>{const s=h('div',{class:'sb'+(p===path?' sel':''),onclick:()=>go(p),html:SI[i]+`<span>${n}</span>`});s.addEventListener('dragover',e=>{e.preventDefault();s.classList.add('dragover')});s.addEventListener('dragleave',()=>s.classList.remove('dragover'));s.addEventListener('drop',e=>{e.preventDefault();s.classList.remove('dragover');moveInto(e.dataTransfer.getData('text/aura'),p)});side.append(s)})}
   function itemMenu(ev,e){ev.preventDefault();ev.stopPropagation();if(!sel.has(e.path)){sel.clear();sel.add(e.path);render()}
-    const paths=[...sel];showMenu(ev.clientX,ev.clientY,[{label:'Open',fn:()=>FS.isDir(e.path)?go(e.path):openPath(e.path)},...(trash()?[{label:'Put Back',fn:()=>paths.forEach(putBack)}]:[{label:'Rename…',fn:()=>renameItem(e.path)},{label:'Cut',key:'Ctrl+X',fn:()=>{Clip.p=paths;Clip.cut=true}},{label:'Copy',key:'Ctrl+C',fn:()=>{Clip.p=paths;Clip.cut=false}},{label:'Duplicate',fn:()=>paths.forEach(p=>FS.cp(p,FS.dirname(p)))},{label:'Copy to Desktop',fn:()=>paths.forEach(p=>FS.cp(p,HOME+'/Desktop'))},{label:'Download',fn:()=>paths.forEach(download)}]),'-',{label:trash()?'Delete Permanently':'Move to Trash',fn:()=>paths.forEach(p=>FS.trash(p))},'-',{label:'Get Info',fn:()=>dialog({title:e.name,msg:`Kind: ${e.node.t==='d'?'Folder':ext(e.name).toUpperCase()+' file'}\nSize: ${fmtSize(FS.size(e.node))}\nPath: ${e.path}`})}])}
-  function render(){renderSide();crumb.textContent=path==='/'?'Aura HD':FS.base(path);win.setTitle(crumb.textContent);
+    const paths=[...sel];showMenu(ev.clientX,ev.clientY,[{label:'Open',fn:()=>FS.isDir(e.path)?go(e.path):openPath(e.path)},...(trash()?[{label:'Put Back',fn:()=>paths.forEach(putBack)}]:[{label:'Rename…',fn:()=>renameItem(e.path)},{label:'Cut',key:'Ctrl+X',fn:()=>{Clip.p=paths;Clip.cut=true}},{label:'Copy',key:'Ctrl+C',fn:()=>{Clip.p=paths;Clip.cut=false}},{label:'Duplicate',fn:()=>paths.forEach(p=>FS.cp(p,FS.dirname(p)))},{label:'Tags…',fn:()=>tagPicker(paths)},{label:'Copy to Desktop',fn:()=>paths.forEach(p=>FS.cp(p,HOME+'/Desktop'))},{label:'Download',fn:()=>paths.forEach(download)}]),'-',{label:trash()?'Delete Permanently':'Move to Trash',fn:()=>paths.forEach(p=>FS.trash(p))},'-',{label:'Get Info',fn:()=>dialog({title:e.name,msg:`Kind: ${e.node.t==='d'?'Folder':ext(e.name).toUpperCase()+' file'}\nSize: ${fmtSize(FS.size(e.node))}\nPath: ${e.path}`})}])}
+  function render(){renderSide();side.append(h('h6',{class:'tagsec'},'Tags'),...Object.entries(TAGS).map(([k,c])=>h('div',{class:'sb'+(tagView===k?' sel':''),onclick:()=>{tagView=k;sel.clear();render()}},h('i',{style:`width:11px;height:11px;border-radius:50%;background:${c};flex:none`}),h('span',{style:'text-transform:capitalize'},k))));crumb.textContent=tagView?'Tag: '+tagView:path==='/'?'Aura HD':FS.base(path);win.setTitle(crumb.textContent);if(tabs.length>1||tabbar.style.display!=='none')renderTabs();
     back.disabled=idx<=0;fwd.disabled=idx>=hist.length-1;up.disabled=path==='/';empty.style.display=path==='/Trash'?'':'none';nf.style.display=trash()?'none':'';imp.style.display=trash()?'none':'';
-    let items=[];try{items=FS.ls(path)}catch{go(HOME,false);return}
+    let items=[];try{items=tagView?tagged(tagView):FS.ls(path)}catch{go(HOME,false);return}
     const q=search.value.toLowerCase();if(q)items=items.filter(e=>e.name.toLowerCase().includes(q));
     content.innerHTML='';content.className=view==='grid'?'fgrid':'flist';content.tabIndex=0;
     items.forEach(e=>{let el;const open=()=>e.node.t==='d'?go(e.path):openPath(e.path);
@@ -797,7 +851,7 @@ Apps.finder={name:'Finder',icon:ICONS.finder,w:780,h:490,
   content.addEventListener('click',()=>{sel.clear();render()});
   content.addEventListener('contextmenu',ev=>{ev.preventDefault();ev.stopPropagation();showMenu(ev.clientX,ev.clientY,trash()?[{label:'Empty Trash',fn:()=>empty.click()}]:[{label:'New Folder',fn:()=>newItem(path,'d')},{label:'New File',fn:()=>newItem(path,'f')},{label:'Paste',key:'Ctrl+V',dis:!Clip.p.length,fn:()=>pasteHere(path)},{label:'Import Files…',fn:()=>importFiles(path)},'-',{label:'Toggle List/Grid View',fn:()=>vbtn.click()},{label:'Open Terminal',fn:()=>launch('terminal')}])});
   content.addEventListener('dragover',e=>e.preventDefault());content.addEventListener('drop',e=>{e.preventDefault();if(trash())return;if(e.dataTransfer.files.length)importList(path,e.dataTransfer.files);else moveInto(e.dataTransfer.getData('text/aura'),path)});
-  content.addEventListener('keydown',e=>{const c=e.ctrlKey||e.metaKey;if(c&&e.key==='c'){e.preventDefault();Clip.p=[...sel];Clip.cut=false;return}if(c&&e.key==='x'){e.preventDefault();Clip.p=[...sel];Clip.cut=true;return}if(c&&e.key==='v'){e.preventDefault();pasteHere(path);return}if(c&&e.key==='a'){e.preventDefault();try{FS.ls(path).forEach(x=>sel.add(x.path))}catch{}render();return}if((e.key==='Delete'||e.key==='Backspace')&&sel.size){[...sel].forEach(p=>FS.trash(p));sel.clear()}else if(e.key==='Enter'&&sel.size===1){const p0=[...sel][0];FS.isDir(p0)?go(p0):openPath(p0)}else if(e.key==='F2'&&sel.size===1)renameItem([...sel][0])});
+  content.addEventListener('keydown',e=>{const c=e.ctrlKey||e.metaKey;if(c&&e.key==='t'){e.preventDefault();newTab();return}if(c&&e.key==='c'){e.preventDefault();Clip.p=[...sel];Clip.cut=false;return}if(c&&e.key==='x'){e.preventDefault();Clip.p=[...sel];Clip.cut=true;return}if(c&&e.key==='v'){e.preventDefault();pasteHere(path);return}if(c&&e.key==='a'){e.preventDefault();try{FS.ls(path).forEach(x=>sel.add(x.path))}catch{}render();return}if((e.key==='Delete'||e.key==='Backspace')&&sel.size){[...sel].forEach(p=>FS.trash(p));sel.clear()}else if(e.key==='Enter'&&sel.size===1){const p0=[...sel][0];FS.isDir(p0)?go(p0):openPath(p0)}else if(e.key==='F2'&&sel.size===1)renameItem([...sel][0])});
   win.finderNew=k=>newItem(path,k);win.update=a=>a.path&&go(a.path);
   win.closeHook(FS.on(()=>{if(!FS.isDir(path))path=HOME;render()}));render()}};
 
@@ -887,7 +941,7 @@ Apps.notes={name:'Notes',icon:ICONS.notes,w:700,h:460,single:true,menu:w=>[{labe
   ta.addEventListener('input',()=>{if(cur){FS.write(cur,ta.value,true);const n=FS.get(cur);const row=$('.nrow.sel',list);if(row){$('b',row).textContent=title(ta.value);$('small',row).textContent=new Date(n.m).toLocaleDateString()+'  '+(ta.value.split('\n')[1]||'No additional text').slice(0,30)}}});
   ta.addEventListener('keydown',e=>e.stopPropagation());
   const side=h('div',{style:'display:flex;flex-direction:column;border-right:1px solid var(--line)'},list);list.style.flex='1';list.style.borderRight='0';
-  win.body.style.flexDirection='column';win.body.append(h('div',{class:'toolbar'},toolbarBtn('＋ New Note',newNote),toolbarBtn('🗑 Delete',()=>{if(cur){FS.trash(cur);cur=null}})),h('div',{class:'split'},side,ta));
+  win.body.style.flexDirection='column';win.body.append(h('div',{class:'toolbar'},toolbarBtn('＋ New Note',newNote),toolbarBtn('Delete',()=>{if(cur){FS.trash(cur);cur=null}})),h('div',{class:'split'},side,ta));
   win.closeHook(FS.on(()=>{if(!win.closed)renderList()}));renderList()}};
 
 /* ---------- Calculator ---------- */
@@ -958,15 +1012,19 @@ Apps.snake={name:'Snake',icon:ICONS.snake,w:420,h:480,single:true,open(win){
   win.body.addEventListener('mousedown',()=>wrap.focus());win.closeHook(()=>clearInterval(timer));reset();win.snakeState=()=>({s,score,over})}};
 
 /* ---------- Activity Monitor ---------- */
-Apps.monitor={name:'Activity Monitor',icon:ICONS.monitor,w:560,h:380,single:true,open(win){
-  const box=h('div',{style:'flex:1;overflow:auto'}),info=h('div',{class:'status'});
-  win.body.append(h('div',{class:'toolbar'},toolbarBtn('Force Quit',()=>{const s=box.querySelector('tr.sel');if(s){WM.wins.filter(w=>w.id===+s.dataset.id).forEach(w=>WM.close(w))}}),h('span',{style:'flex:1'}),h('small',{style:'color:var(--text2)'},'Select a process, then Force Quit')),box,info);let selId=null;
-  function r(){const sys=[['kernel_aura',1],['WindowServer',3],['Finder helper',1],['mds_spotlight',1]];
-    box.innerHTML='';const t=h('table',{class:'am'},h('thead',0,h('tr',0,['Process','CPU %','Memory','PID'].map(x=>h('th',0,x)))));const b=h('tbody');
-    sys.forEach((s,i)=>b.append(h('tr',0,h('td',0,s[0]),h('td',0,(s[1]*(.4+Math.random()*1.2)).toFixed(1)),h('td',0,(30+i*17)+' MB'),h('td',0,String(100+i)))));
-    WM.wins.forEach(w=>b.append(h('tr',{class:w.id===selId?'sel':'','data-id':w.id,style:w.id===selId?'outline:2px solid var(--accent)':'',onclick:()=>{selId=w.id;r()}},h('td',0,Apps[w.app].name+' — '+w.ttl.textContent),h('td',0,(Math.random()*(w.app==='snake'?9:3)).toFixed(1)),h('td',0,(40+w.id*7%90)+' MB'),h('td',0,String(1000+w.id)))));
-    t.append(b);box.append(t);const mem=performance.memory?fmtSize(performance.memory.usedJSHeapSize):'n/a';info.textContent=`${WM.wins.length} app windows · JS heap ${mem} · Disk used ${fmtSize(FS.size(DB.fs))}`}
-  r();const iv=setInterval(()=>{if(!win.minimized)r()},1500);win.closeHook(()=>clearInterval(iv))}};
+Apps.monitor={name:'Activity Monitor',icon:ICONS.monitor,w:620,h:430,single:true,open(win){
+  const box=h('div',{style:'flex:1;overflow:auto'}),top=h('div',{style:'display:flex;gap:10px;padding:10px 12px 0'}),info=h('div',{class:'status'});let selId=null,st=null;
+  win.body.append(h('div',{class:'toolbar'},toolbarBtn('Force Quit',()=>{if(selId!=null)WM.wins.filter(w=>w.id===selId).forEach(w=>WM.close(w))}),h('span',{style:'flex:1'}),h('small',{style:'color:var(--text2)'},Native.on?'Live data from your computer':'Browser mode: per-process CPU is not available. Use the desktop app.')),top,box,info);
+  const stat=(l,v,p)=>h('div',{class:'card',style:'flex:1;padding:10px 12px;margin:0'},h('div',{style:'color:var(--text2);font-size:11.5px'},l),h('div',{style:'font-size:20px;font-weight:600;margin:2px 0 6px'},v),p!=null?h('div',{class:'mbar'},h('i',{style:`width:${Math.min(100,p)}%`})):null);
+  function r(){const heap=performance.memory;top.innerHTML='';box.innerHTML='';
+    const t=h('table',{class:'am'},h('thead',0,h('tr',0,['Process','CPU %','Memory','PID'].map(x=>h('th',0,x)))));const b=h('tbody');
+    if(st){top.append(stat('CPU load',st.cpu==null?'…':st.cpu+'%',st.cpu),stat('Memory',fmtSize(st.memUsed)+' of '+fmtSize(st.memTotal),st.memUsed/st.memTotal*100),stat('Uptime',fmtUp(st.uptime)));
+      st.procs.slice().sort((a,c)=>c.cpu-a.cpu||c.memKB-a.memKB).forEach(p=>b.append(h('tr',0,h('td',0,(p.name||p.type)+(p.type==='Browser'?' (Aura OS)':'')),h('td',0,p.cpu.toFixed(1)),h('td',0,fmtSize(p.memKB*1024)),h('td',0,String(p.pid)))))}
+    else top.append(stat('JS memory',heap?fmtSize(heap.usedJSHeapSize):'n/a',heap?heap.usedJSHeapSize/heap.jsHeapSizeLimit*100:null),stat('Aura files',fmtSize(FS.size(DB.fs))),stat('Windows',String(WM.wins.length)));
+    WM.wins.forEach(w=>b.append(h('tr',{class:w.id===selId?'sel':'','data-id':w.id,style:w.id===selId?'outline:2px solid var(--accent)':'',onclick:()=>{selId=w.id;r()}},h('td',0,Apps[w.app].name+' — '+w.ttl.textContent),h('td',{style:'color:var(--text2)'},'—'),h('td',{style:'color:var(--text2)'},'—'),h('td',0,'win '+w.id))));
+    t.append(b);box.append(t);info.textContent=`${WM.wins.length} app windows`+(heap?` · JS heap ${fmtSize(heap.usedJSHeapSize)}`:'')+(st?` · ${st.procs.length} processes`:'')}
+  async function poll(){if(Native.on){try{st=await auraNative.system.stats()}catch{}}if(!win.closed)r()}
+  poll();const iv=setInterval(()=>{if(!win.minimized&&!document.hidden)poll()},2000);win.closeHook(()=>clearInterval(iv))}};
 
 /* ---------- Preview ---------- */
 Apps.preview={name:'Preview',w:620,h:460,open(win,args){win.setTitle(FS.base(args.path));let z=1;const src=imgSrc(args.path);
@@ -985,7 +1043,7 @@ Apps.settings={name:'System Settings',icon:ICONS.settings,w:800,h:560,single:tru
    if(page==='general'){H('General');box.append(h('div',{class:'card'},row('Name',h('input',{class:'field',value:S.name,onchange:e=>{S.name=e.target.value.trim()||'User';save();prepLock()}})),row('Version','Aura OS 1.0'),row('Storage used',fmtSize(FS.size(DB.fs))),row('Browser',navigator.userAgent.slice(0,60)+'…'),row('Install app',PWA.installed?h('span',{class:'badge ok'},'Installed'):PWA.ev?h('div',{class:'btn sm pri',onclick:async()=>{await PWA.install();draw()}},'Install…'):h('span',{class:'badge'},'Not available'),PWA.installed?'Running as an installed app':PWA.ev?'Add Aura OS to your desktop or home screen, works offline':'Use your browser menu: Install app / Add to Home Screen')),
      h('div',{class:'card'},row('Reset Aura OS','',"Erase all files and settings"),h('div',{class:'crow'},h('div',{class:'btn',style:'flex:none;color:#ff453a',onclick:async()=>{if(await confirmD('Reset Aura OS?','All files and settings will be erased.')){Store.wipe().then(()=>location.reload())}}},'Erase All Content and Settings…'))))}
    if(page==='shell'){H('Desktop Style');box.append(h('div',{class:'card',style:'padding:14px'},h('div',{class:'sub',style:'margin-bottom:12px'},'Choose how the desktop is laid out. Your files, settings and apps stay the same. Windows style: press the Windows key or click Start. Linux style: click Activities.'),h('div',{class:'shells'},[['mac','macOS','Menu bar on top, floating Dock'],['win','Windows','Taskbar and Start menu'],['linux','Linux','Top bar, side dock, Activities']].map(([k,n,d])=>h('div',{class:'shellc'+((S.shell||'mac')===k?' sel':''),onclick:()=>{setShell(k);draw()}},h('div',{class:'shp '+k}),h('b',0,n),h('div',{class:'sub'},d))))))}
-   if(page==='appearance'){H('Appearance');box.append(h('div',{class:'card'},row('Dark mode',tog(S.dark,v=>applyTheme({dark:v}))),row('Accent color',h('div',{class:'swatches'},['#0a84ff','#bf5af2','#ff375f','#ff9f0a','#30d158','#8e8e93'].map(c=>h('i',{class:c===S.accent?'sel':'',style:'background:'+c,onclick:()=>{applyTheme({accent:c});draw()}}))))))}
+   if(page==='appearance'){H('Appearance');box.append(h('div',{class:'card'},row('Dark mode',tog(S.dark,v=>applyTheme({dark:v}))),row('Accent color',h('div',{class:'swatches'},['#4c8dff','#8b7bff','#ef5f8f','#f59e42','#3fbf8a','#8e939c'].map(c=>h('i',{class:c===S.accent?'sel':'',style:'background:'+c,onclick:()=>{applyTheme({accent:c});draw()}}))))))}
    if(page==='wall'){H('Wallpaper');box.append(h('div',{class:'card'},h('div',{class:'walls'},WALLS.map((w,i)=>h('div',{class:'wall'+(i===S.wall?' sel':''),style:'background:'+w,onclick:()=>{applyTheme({wall:i});draw()}})))));
      let ph=[];try{ph=FS.ls(HOME+'/Pictures').filter(e=>e.node.t==='f'&&isImg(e.name))}catch{}
      box.append(h('h2',{style:'font-size:15px'},'Your Photos'),h('div',{class:'card'},ph.length?h('div',{class:'walls'},ph.map(e=>h('div',{class:'wall'+(S.wall==='file:'+e.path?' sel':''),title:e.name,style:`background:url("${imgSrc(e.path)}") center/cover`,onclick:()=>{applyTheme({wall:'file:'+e.path});draw()}}))):h('div',{class:'crow',style:'color:var(--text2)'},'Import pictures in Photos to use them here.')))}
@@ -998,12 +1056,13 @@ Apps.settings={name:'System Settings',icon:ICONS.settings,w:800,h:560,single:tru
    if(page==='dock'){H('Dock');box.append(h('div',{class:'card'},row('Icon size',h('input',{type:'range',min:36,max:80,value:S.dock,style:'width:200px;margin:0',oninput:e=>applyTheme({dock:+e.target.value})}))))}
    if(page==='sound'){H('Sound & Display');box.append(h('div',{class:'card'},row('Volume',h('input',{type:'range',min:0,max:100,value:S.volume,style:'width:200px;margin:0',oninput:e=>{S.volume=+e.target.value;Player.vol();save()},onchange:()=>beep()})),row('Brightness',h('input',{type:'range',min:30,max:100,value:S.bright,style:'width:200px;margin:0',oninput:e=>{S.bright=+e.target.value;applyBright();save()}}))))}
    if(page==='security'){H('Lock & Password');const pw=h('input',{class:'field',type:'password',placeholder:S.pass?'New password':'Set a password'});box.append(h('div',{class:'card'},row('Password',h('div',{style:'display:flex;gap:8px'},pw,h('div',{class:'btn',style:'flex:none',onclick:async()=>{if(!pw.value)return;S.pass=await hashPw(pw.value);save();toast('Settings','Password updated');draw()}},'Set'),S.pass?h('div',{class:'btn',style:'flex:none',onclick:()=>{S.pass='';save();toast('Settings','Password removed');draw()}},'Remove'):null),'Required to unlock the screen'),row('Lock now','' ,'Shortcut: Ctrl+L'),h('div',{class:'crow'},h('div',{class:'btn',style:'flex:none',onclick:lockScreen},'Lock Screen'))))}
-   if(page==='wifi'){H('Wi-Fi & Network');if(Sys.stale())Sys.refresh();const n=Sys.net,c=Sys.conn();
+   if(page==='wifi'){H('Wi-Fi & Network');if(Sys.stale())Sys.refresh();Native.wifiLoad();const n=Sys.net,c=Sys.conn();
      const st=!n.online?['Offline','bad','This device has no network connection.']:n.reach===false?['No internet','warn','Connected to a network, but the internet is not reachable.']:n.reach==null?['Checking…','','Testing your connection…']:['Connected','ok','The internet is reachable.'];
      box.append(h('div',{class:'card'},h('div',{class:'hero'},h('div',{class:'big2',style:'background:'+(st[1]==='ok'?'#0a84ff':st[1]==='warn'?'#ff9f0a':'#8e8e93'),html:ico('wifi',28)}),h('div',{style:'flex:1'},h('b',{style:'font-size:16px'},st[0]),h('div',{class:'sub'},st[2])),h('div',{class:'btn sm',onclick:()=>Sys.refresh(true)},'Refresh'))),
       h('div',{class:'card'},kv([['Latency',n.latency!=null?n.latency+' ms':null],['Public IP',n.ip],['Provider (ISP)',n.isp],['Location',[n.city,n.region,n.country].filter(Boolean).join(', ')],['Nearest data center',n.colo],['Protocol',n.http?`${n.http.toUpperCase()} · ${n.tls||''}`:null],['Connection type',c?(c.type||'Not reported'):'Not supported by this browser'],['Speed class',c?.eff],['Downlink estimate',c?.down!=null?c.down+' Mbps':null],['Round-trip estimate',c?.rtt!=null?c.rtt+' ms':null],['Data saver',c?(c.save?'On':'Off'):null]])));
      const sp=n.speed,bar=h('div',{class:'mbar',style:'margin-top:8px;display:'+(n.speedRun?'block':'none')},h('i',{style:'width:0%'})),live=h('div',{class:'sub'},n.speedRun?'Testing…':n.speedErr||(sp?`Last test ${new Date(sp.at).toLocaleTimeString()}`:'Measures real download and upload speed using Cloudflare.'));
      box.append(h('div',{class:'card'},h('div',{class:'crow'},h('div',{style:'flex:1'},h('b',0,sp?`↓ ${sp.down.toFixed(1)} Mbps   ↑ ${sp.up!=null?sp.up.toFixed(1)+' Mbps':'—'}`:'Speed test'),live,bar),h('div',{class:'btn pri'+(n.speedRun?' dis':''),onclick:()=>{Sys.speed((m,p)=>{bar.firstChild.style.width=p*100+'%';live.textContent=`Downloading… ${m.toFixed(1)} Mbps`}).catch(()=>{})}},n.speedRun?'Testing…':'Run Test'))));
+     if(Native.wifi&&Native.wifi.ssid)box.append(h('h3',0,'Connected network'),h('div',{class:'card'},kv([['Network',Native.wifi.ssid],['Signal',Native.wifi.signal!=null?Native.wifi.signal+'%':null],['Link speed',Native.wifi.rateMbps?Native.wifi.rateMbps+' Mbps':null],['Channel',Native.wifi.channel],['Standard',Native.wifi.radio],['Security',Native.wifi.security],['Access point',Native.wifi.bssid]])));else if(Native.wifi&&Native.wifi.redacted)box.append(h('div',{class:'card'},h('div',{class:'crow',style:'color:var(--text2)'},'macOS hides the network name until Location Services is allowed for Aura OS.')));
      if(window.auraNative?.wifi){const W=Sys.wifi;box.append(h('h3',0,'Nearby networks'),h('div',{class:'card'},h('div',{class:'crow'},h('div',{class:'sub'},W?`${W.list.length} found · scanned ${new Date(W.t).toLocaleTimeString()}`:'Scan to list real nearby Wi-Fi networks.'),h('div',{class:'btn sm',onclick:()=>Sys.wifiScan()},Sys.wifiBusy?'Scanning…':'Scan')),...(W?W.list.map(x=>h('div',{class:'netrow'},h('span',{html:ico('wifi',18)}),h('div',{class:'grow'},h('b',0,x.ssid||'(hidden network)'),h('div',{class:'sub'},x.security||'Open')),x.connected?h('span',{class:'badge ok'},'Connected'):null,sigBars(x.signal))):[]),h('div',{class:'crow'},h('div',{class:'btn sm',onclick:()=>window.auraNative.openNetworkSettings()},'Open system Wi-Fi settings'))))}
      else box.append(h('div',{class:'card'},h('div',{class:'crow'},h('div',0,h('b',0,'Nearby Wi-Fi networks'),h('div',{class:'sub'},'Web browsers deliberately hide Wi-Fi names and signal strength. Install the Aura desktop app (Electron) to list real nearby networks.')))))}
    if(page==='bluetooth'){H('Bluetooth');const av=navigator.bluetooth?(Sys.bt.avail===false?['Bluetooth unavailable','bad','No Bluetooth adapter found, or it is turned off.']:['Ready','ok','Click Add Device to pair a nearby device.']):['Not supported','bad','This browser has no Web Bluetooth. Use Chrome or Edge (desktop/Android), or the Aura desktop app.'];
@@ -1013,6 +1072,7 @@ Apps.settings={name:'System Settings',icon:ICONS.settings,w:800,h:560,single:tru
      else box.append(h('div',{class:'card'},h('div',{class:'crow',style:'color:var(--text2)'},'No devices yet.')))}
    if(page==='battery'){H('Battery');if(batLevel==null)box.append(h('div',{class:'card'},h('div',{class:'crow',style:'color:var(--text2)'},'This browser does not expose battery information (Safari/Firefox). Chrome and Edge do.')));else{const fmtT=sec=>!isFinite(sec)?'—':`${Math.floor(sec/3600)}h ${Math.floor(sec/60)%60}m`;
      box.append(h('div',{class:'card'},h('div',{class:'hero'},h('div',{class:'big2',style:'background:'+(batChg?'#30d158':batLevel<20?'#ff453a':'#30d158'),html:ico('battery',28)}),h('div',{style:'flex:1'},h('b',{style:'font-size:22px'},batLevel+'%'),h('div',{class:'sub'},batChg?'Charging':'On battery'))),h('div',{class:'mbar',style:'margin-bottom:12px'},h('i',{style:'width:'+batLevel+'%'}))),h('div',{class:'card'},kv([['State',batChg?'Charging':'Discharging'],['Time until full',batChg&&batObj?fmtT(batObj.chargingTime):'—'],['Time remaining',!batChg&&batObj?fmtT(batObj.dischargingTime):'—']])))}}
+   if(page==='battery'&&Native.bat){const b=Native.bat;box.append(h('div',{class:'card'},kv([['Power source',b.source==='ac'?'Power adapter':b.source==='battery'?'Battery':(b.charging?'Power adapter':'Battery')],['State',b.state],['Time remaining',b.remaining],['Health',b.health!=null?b.health+'% of design capacity':null],['Charge cycles',b.cycles],['Technology',b.technology]])))}
    if(page==='notif'){H('Notifications');const perm=window.Notification?Notification.permission:'unsupported';
      box.append(h('div',{class:'card'},row('Do Not Disturb',tog(S.dnd,v=>{S.dnd=v;save();buildCC()}),'Hides in-app banners (alarms and errors still show)'),row('System notifications',perm==='granted'?h('span',{class:'badge ok'},'Allowed'):perm==='denied'?h('span',{class:'badge bad'},'Blocked in browser settings'):perm==='unsupported'?h('span',{class:'badge'},'Unsupported'):h('div',{class:'btn sm pri',onclick:async()=>{await Notification.requestPermission();draw()}},'Allow…'),'Alarms and timers can notify you even when this tab is in the background'),row('Send a test','',''),h('div',{class:'crow'},h('div',{class:'btn sm',onclick:()=>toast('Test notification','It works!',true)},'Send Test'))))}
    if(page==='cloud'){H('Cloud Sync');const C=Cloud.st(),cf=Cloud.cfg();
@@ -1047,10 +1107,10 @@ const IC={play:'<svg width="22" height="22" viewBox="0 0 24 24"><path d="M7 4.5v
 /* ======================================================================= PLAYER (low-CPU WebAudio synth) */
 const Player={ctx:null,idx:0,playing:false,shuffle:false,step:0,t:0,ls:new Set(),
  tracks:[
-  {n:'Aurora',a:'Aura Synth',bpm:92,root:57,sc:[0,2,4,7,9],prog:[0,3,4,2],arp:[0,2,4,2,5,4,2,1],w:'sine',v:.9,c:'linear-gradient(135deg,#5ac8fa,#af52de)'},
-  {n:'Neon Drive',a:'Night Circuit',bpm:118,root:52,sc:[0,2,3,5,7,8,10],prog:[0,5,3,4],arp:[0,2,4,7,4,2,0,-1],w:'sawtooth',v:.28,c:'linear-gradient(135deg,#ff375f,#ff9f0a)'},
-  {n:'Sunday Chill',a:'Lo-Fi Lab',bpm:72,root:60,sc:[0,2,4,5,7,9,11],prog:[0,5,3,4],arp:[0,-1,2,-1,4,-1,2,-1],w:'triangle',v:.8,c:'linear-gradient(135deg,#ffd60a,#30d158)'},
-  {n:'Deep Space',a:'Orbit',bpm:60,root:45,sc:[0,3,5,7,10],prog:[0,2,4,1],arp:[0,-1,-1,2,-1,-1,4,-1],w:'sine',v:1,c:'linear-gradient(135deg,#0a84ff,#1b1340)'}],
+  {n:'Aurora',a:'Aura Synth',bpm:92,root:57,sc:[0,2,4,7,9],prog:[0,3,4,2],arp:[0,2,4,2,5,4,2,1],w:'sine',v:.9,c:'linear-gradient(135deg,#6aa8ff,#8f6bff)'},
+  {n:'Neon Drive',a:'Night Circuit',bpm:118,root:52,sc:[0,2,3,5,7,8,10],prog:[0,5,3,4],arp:[0,2,4,7,4,2,0,-1],w:'sawtooth',v:.28,c:'linear-gradient(135deg,#ef6a7a,#f0a25a)'},
+  {n:'Sunday Chill',a:'Lo-Fi Lab',bpm:72,root:60,sc:[0,2,4,5,7,9,11],prog:[0,5,3,4],arp:[0,-1,2,-1,4,-1,2,-1],w:'triangle',v:.8,c:'linear-gradient(135deg,#e8c668,#6fc79a)'},
+  {n:'Deep Space',a:'Orbit',bpm:60,root:45,sc:[0,3,5,7,10],prog:[0,2,4,1],arp:[0,-1,-1,2,-1,-1,4,-1],w:'sine',v:1,c:'linear-gradient(135deg,#3f6fd8,#1c2350)'}],
  on(f){this.ls.add(f);return()=>this.ls.delete(f)},emit(){this.ls.forEach(f=>f())},
  cur(){return this.tracks[this.idx]},
  init(){if(this.ctx)return;this.ctx=new (window.AudioContext||window.webkitAudioContext)();this.master=this.ctx.createGain();this.an=this.ctx.createAnalyser();this.an.fftSize=64;this.master.connect(this.an);this.an.connect(this.ctx.destination);this.vol()},
@@ -1092,7 +1152,7 @@ const Widgets={
  system(){const el=h('div',{class:'wd','data-w':'system'},h('div',{class:'wh'},'System')),body=h('div',{style:'display:grid;gap:8px'});el.append(body);let c=0;
   const fn=()=>{if(c++%4)return;const heap=performance.memory?performance.memory.usedJSHeapSize:0,used=FS.size(DB.fs);body.innerHTML='';
    const row=(l,v,p)=>h('div',0,h('div',{style:'display:flex;justify-content:space-between;font-size:12px'},h('span',0,l),h('span',{style:'color:var(--text2)'},v)),p!=null?h('div',{class:'mbar'},h('i',{style:`width:${Math.min(100,p)}%`})):null);
-   body.append(row('Storage',fmtSize(used)+' of ~5 MB',used/5242880*100),row('Memory',heap?fmtSize(heap):'n/a',heap?heap/(performance.memory.jsHeapSizeLimit||1)*100*8:null),row('Battery',batLevel==null?'n/a':batLevel+'%'+(batChg?' · charging':''),batLevel),row('Open windows',String(WM.wins.length)))};
+   body.append(row('Aura files',fmtSize(used)),(Native.info?row('Memory',fmtSize(Native.info.mem.total-Native.info.mem.free)+' of '+fmtSize(Native.info.mem.total),(1-Native.info.mem.free/Native.info.mem.total)*100):row('JS memory',heap?fmtSize(heap):'n/a',heap?heap/(performance.memory.jsHeapSizeLimit||1)*100*8:null)),row('Battery',batLevel==null?'n/a':batLevel+'%'+(batChg?' · charging':''),batLevel),row('Open windows',String(WM.wins.length)))};
   fn();LIVE.add({el,fn});return el},
  music(){const el=h('div',{class:'wd','data-w':'music',style:'display:flex;align-items:center;gap:12px'}),art=h('div',{class:'art'}),t=h('div',{style:'flex:1;min-width:0'}),pp=h('button',{class:'tbtn',onclick:()=>Player.toggle()}),nx=h('button',{class:'tbtn',html:IC.next,onclick:()=>Player.next()});
   const draw=()=>{const tr=Player.cur();art.style.background=tr.c;t.innerHTML='';t.append(h('b',{style:'display:block'},tr.n),h('small',{style:'color:var(--text2)'},tr.a));pp.innerHTML=Player.playing?IC.pause:IC.play};
@@ -1303,11 +1363,21 @@ Apps.camera={name:'Camera',icon:ICONS.camera,w:640,h:520,single:true,open(win){
 /* ---------- System Info ---------- */
 function gpuName(){try{const c=document.createElement('canvas'),g=c.getContext('webgl'),e=g.getExtension('WEBGL_debug_renderer_info');return e?g.getParameter(e.UNMASKED_RENDERER_WEBGL):g.getParameter(g.RENDERER)}catch{return null}}
 const kv=pairs=>h('div',{class:'kv'},pairs.flatMap(([k,v])=>[h('span',0,k),h('span',0,v==null||v===''?'—':String(v))]));
-function sysReport(){const nav=navigator,ud=nav.userAgentData,n=Sys.net,t=Math.floor(performance.now()/1000);
-  return [['OS','Aura OS 1.0'],['Uptime',`${Math.floor(t/3600)}h ${Math.floor(t/60)%60}m ${t%60}s`],['Browser',ud&&ud.brands?ud.brands.filter(b=>!/Not.?A/i.test(b.brand)).map(b=>b.brand+' '+b.version).join(', '):nav.userAgent.slice(0,60)],['Platform',(ud&&ud.platform)||nav.platform],['CPU threads',nav.hardwareConcurrency],['Device memory',nav.deviceMemory?nav.deviceMemory+' GB (approx.)':'Not reported'],['Graphics',gpuName()],['Screen',`${screen.width}×${screen.height} @${devicePixelRatio}x · ${screen.colorDepth}-bit`],['Window',`${innerWidth}×${innerHeight}`],['Language',nav.language],['Time zone',Intl.DateTimeFormat().resolvedOptions().timeZone],['Touch points',nav.maxTouchPoints],['Online',n.online?'Yes':'No'],['Public IP',n.ip||'—'],['Battery',batLevel==null?'Not available':batLevel+'%'+(batChg?' (charging)':'')],['Installed as app',matchMedia('(display-mode: standalone)').matches||window.auraNative?'Yes':'No']]}
+/* ---------- Native device bridge (desktop app only; browsers cannot read these) ---------- */
+const Native={info:null,wifi:null,bat:null,get on(){return !!(window.auraNative&&window.auraNative.system)},
+ async load(){if(!this.on)return;try{this.info=await auraNative.system.info();Sys.emit(true)}catch(e){console.error(e)}this.pollBattery();setInterval(()=>{if(!document.hidden)this.pollBattery()},60000)},
+ async pollBattery(){try{const b=await auraNative.system.battery();if(b){this.bat=b;if(b.percent!=null){batLevel=b.percent;batChg=!!b.charging;updateStatus()}}}catch{}},
+ async wifiLoad(){if(!(window.auraNative&&window.auraNative.wifi&&window.auraNative.wifi.current)||this.wifiBusy)return;this.wifiBusy=true;try{this.wifi=await auraNative.wifi.current();Sys.emit(true)}catch{}this.wifiBusy=false}};
+const fmtUp=t=>{t=Math.floor(t);const d=Math.floor(t/86400);return (d?d+'d ':'')+Math.floor(t/3600)%24+'h '+Math.floor(t/60)%60+'m'};
+function sysReport(){const nav=navigator,ud=nav.userAgentData,n=Sys.net,t=Math.floor(performance.now()/1000),I=Native.info;
+  const common=[['Time zone',Intl.DateTimeFormat().resolvedOptions().timeZone],['Language',nav.language],['Online',n.online?'Yes':'No'],['Public IP',n.ip||'—']];
+  if(I){const b=Native.bat;return [['Computer',I.os.hostname],['Operating system',`${I.os.type} ${I.os.release}`+(I.os.arch?' · '+I.os.arch:'')],['Aura OS','1.0 (desktop app'+(auraNative.version?' '+auraNative.version:'')+')'],['Uptime',fmtUp(I.os.uptime)],['Processor',I.cpu.model],['Cores',I.cpu.cores],['Memory',`${fmtSize(I.mem.total)} (${fmtSize(I.mem.free)} free)`],['Graphics',I.gpu||gpuName()||'—'],
+    ['Displays',(I.displays||[]).map(d=>`${d.w}×${d.h} @${d.scale}x${d.hz?' · '+d.hz+' Hz':''}`).join(', ')||'—'],...(I.disks||[]).map(d=>['Disk '+d.mount,`${fmtSize(d.free)} free of ${fmtSize(d.total)}`]),...(I.net||[]).map(x=>['Network '+x.name,`${x.ip} · ${x.mac}`]),
+    ['Battery',b?`${b.percent}%${b.charging?' (charging)':''}${b.health?' · health '+b.health+'%':''}${b.cycles!=null?' · '+b.cycles+' cycles':''}`:'No battery'],...common,['Runtime',`Electron ${I.versions.electron} · Chrome ${I.versions.chrome}`]]}
+  return [['Source','Browser (limited). Install the desktop app for full hardware details.'],['Uptime (this session)',`${Math.floor(t/3600)}h ${Math.floor(t/60)%60}m ${t%60}s`],['Browser',ud&&ud.brands?ud.brands.filter(b=>!/Not.?A/i.test(b.brand)).map(b=>b.brand+' '+b.version).join(', '):nav.userAgent.slice(0,60)],['Platform',(ud&&ud.platform)||nav.platform],['CPU threads',nav.hardwareConcurrency],['Device memory',nav.deviceMemory?nav.deviceMemory+' GB (rounded by the browser)':'Not reported'],['Graphics',gpuName()],['Screen',`${screen.width}×${screen.height} @${devicePixelRatio}x · ${screen.colorDepth}-bit`],['Window',`${innerWidth}×${innerHeight}`],['Touch points',nav.maxTouchPoints],...common,['Battery',batLevel==null?'Not available':batLevel+'%'+(batChg?' (charging)':'')],['Installed as app',matchMedia('(display-mode: standalone)').matches?'Yes':'No']]}
 Apps.sysinfo={name:'System Info',icon:ICONS.sysinfo,w:520,h:560,single:true,open(win){
   const body=h('div',{class:'sett-h',style:'user-select:text'});win.body.append(body);
-  const draw=()=>{body.innerHTML='';body.append(h('div',{class:'hero'},h('div',{class:'big2',style:'background:linear-gradient(135deg,#5ac8fa,#af52de)',html:ico('cpu',28)}),h('div',0,h('b',{style:'font-size:20px'},'Aura OS'),h('div',{class:'sub'},'Version 1.0 · '+DB.set.name))),h('div',{class:'card'},kv(sysReport())));
+  const draw=()=>{body.innerHTML='';body.append(h('div',{class:'hero'},h('div',{class:'big2',style:'background:linear-gradient(135deg,#6aa8ff,#8f6bff)',html:ico('cpu',28)}),h('div',0,h('b',{style:'font-size:20px'},'Aura OS'),h('div',{class:'sub'},'Version 1.0 · '+DB.set.name))),h('div',{class:'card'},kv(sysReport())));
     navigator.storage&&navigator.storage.estimate&&navigator.storage.estimate().then(e=>{if(!win.closed)body.append(h('div',{class:'card'},kv([['Storage used',fmtSize(e.usage||0)],['Storage quota',fmtSize(e.quota||0)],['OS files',fmtSize(FS.size(DB.fs))]])))}).catch(()=>{})};
   draw();const off=Sys.on(()=>{if(!win.minimized&&!win.closed)draw()});win.closeHook(off)}};
 
@@ -1478,23 +1548,23 @@ Apps.tetris={name:'Tetris',icon:ICONS.tetris,w:400,h:560,single:true,open(win){
 
 /* ---------- Minesweeper ---------- */
 Apps.mines={name:'Minesweeper',icon:ICONS.mines,w:380,h:470,single:true,open(win){
-  const LV={Beginner:[9,9,10],Intermediate:[16,16,40]};let lv='Beginner',R,Cc,M,cells,over,won,first,flags,secs=0,timer=null,opened;
-  const board=h('div',{style:'display:grid;gap:2px;padding:10px;margin:auto;user-select:none'}),face=h('b',{style:'font-size:22px;cursor:default'},'🙂'),cnt=h('b',{style:'font-variant-numeric:tabular-nums;min-width:50px'}),tm=h('b',{style:'font-variant-numeric:tabular-nums;min-width:50px;text-align:right'});
+  const LV={Beginner:[9,9,10],Intermediate:[16,16,40]};const FACE=(k)=>`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/>${k==='ok'?'<path d="M8.5 14.5q3.5 3 7 0M9 9.5h.01M15 9.5h.01"/>':k==='dead'?'<path d="M8.5 16q3.5-3 7 0M8 8.5l2 2M10 8.5l-2 2M14 8.5l2 2M16 8.5l-2 2"/>':'<path d="M8.5 14.5q3.5 3 7 0M8 9h3M13 9h3"/>'}</svg>`,BOMB='<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="13" r="6"/><path d="M12 3v3M4 13H1M23 13h-3M6 7L4 5M18 7l2-2" fill="none"/></svg>',FLAG='<svg width="15" height="15" viewBox="0 0 24 24" fill="#fff" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v18"/><path d="M6 4h12l-3 4 3 4H6z"/></svg>';let lv='Beginner',R,Cc,M,cells,over,won,first,flags,secs=0,timer=null,opened;
+  const board=h('div',{style:'display:grid;gap:2px;padding:10px;margin:auto;user-select:none'}),face=h('b',{style:'cursor:default;display:grid;place-items:center;width:34px;height:34px;border-radius:9px;background:var(--hover)',html:FACE('ok')}),cnt=h('b',{style:'font-variant-numeric:tabular-nums;min-width:50px'}),tm=h('b',{style:'font-variant-numeric:tabular-nums;min-width:50px;text-align:right'});
   const sel=h('select',{class:'field',onchange:e=>{lv=e.target.value;reset()}},Object.keys(LV).map(k=>h('option',{value:k},k)));
   const NC=['','#0a84ff','#30a14e','#ff453a','#5e5ce6','#b4443a','#1aa6b7','#333','#888'];
   const nb=(r,c)=>{const o=[];for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){if(!dr&&!dc)continue;const a=r+dr,b=c+dc;if(a>=0&&b>=0&&a<R&&b<Cc)o.push([a,b])}return o};
-  function reset(){[R,Cc,M]=LV[lv];cells=Array.from({length:R},()=>Array.from({length:Cc},()=>({m:false,o:false,f:false,n:0})));over=won=false;first=true;flags=0;secs=0;opened=0;clearInterval(timer);timer=null;face.textContent='🙂';render()}
+  function reset(){[R,Cc,M]=LV[lv];cells=Array.from({length:R},()=>Array.from({length:Cc},()=>({m:false,o:false,f:false,n:0})));over=won=false;first=true;flags=0;secs=0;opened=0;clearInterval(timer);timer=null;face.innerHTML=FACE('ok');render()}
   function plant(sr,sc){let n=0;while(n<M){const r=Math.random()*R|0,c=Math.random()*Cc|0;if(cells[r][c].m||(Math.abs(r-sr)<=1&&Math.abs(c-sc)<=1))continue;cells[r][c].m=true;n++}cells.forEach((row,r)=>row.forEach((x,c)=>{x.n=nb(r,c).filter(([a,b])=>cells[a][b].m).length}))}
   function open_(r,c){const x=cells[r][c];if(x.o||x.f)return;x.o=true;opened++;if(x.m)return;if(!x.n)nb(r,c).forEach(([a,b])=>open_(a,b))}
   function click(r,c){if(over||won)return;if(first){plant(r,c);first=false;timer=setInterval(()=>{if(!over&&!won&&!document.hidden){secs++;tm.textContent=String(secs).padStart(3,'0')}},1000)}const x=cells[r][c];if(x.f)return;
     if(x.o){const fl=nb(r,c).filter(([a,b])=>cells[a][b].f).length;if(x.n&&fl===x.n)nb(r,c).forEach(([a,b])=>{if(!cells[a][b].f&&!cells[a][b].o){open_(a,b);if(cells[a][b].m)lose()}});check();return render()}
     if(x.m){x.o=true;lose();return render()}open_(r,c);check();render()}
-  function lose(){over=true;face.textContent='😵';clearInterval(timer);cells.forEach(row=>row.forEach(x=>{if(x.m)x.o=true}));beep(150,.35)}
-  function check(){if(!over&&opened===R*Cc-M){won=true;face.textContent='😎';clearInterval(timer);beep(880,.15)}}
+  function lose(){over=true;face.innerHTML=FACE('dead');clearInterval(timer);cells.forEach(row=>row.forEach(x=>{if(x.m)x.o=true}));beep(150,.35)}
+  function check(){if(!over&&opened===R*Cc-M){won=true;face.innerHTML=FACE('win');clearInterval(timer);beep(880,.15)}}
   function flag(r,c){if(over||won||first)return;const x=cells[r][c];if(x.o)return;x.f=!x.f;flags+=x.f?1:-1;render()}
   function render(){board.style.gridTemplateColumns=`repeat(${Cc},26px)`;board.innerHTML='';cnt.textContent=String(Math.max(0,M-flags)).padStart(3,'0');tm.textContent=String(secs).padStart(3,'0');
-    cells.forEach((row,r)=>row.forEach((x,c)=>{const e=h('div',{'data-rc':r+','+c,style:`width:26px;height:26px;display:grid;place-items:center;border-radius:5px;font-weight:700;font-size:14px;cursor:default;background:${x.o?(x.m?'#ff453a55':'var(--hover)'):'var(--accent)'};opacity:${x.o||!x.f?1:1};color:${NC[x.n]||'inherit'}`},x.o?(x.m?'💣':(x.n||'')):(x.f?'🚩':''));
-      e.addEventListener('click',()=>click(r,c));e.addEventListener('contextmenu',ev=>{ev.preventDefault();ev.stopPropagation();flag(r,c)});e.addEventListener('dblclick',()=>{});board.append(e)}))}
+    cells.forEach((row,r)=>row.forEach((x,c)=>{const e=h('div',{'data-rc':r+','+c,style:`width:26px;height:26px;display:grid;place-items:center;border-radius:5px;font-weight:700;font-size:14px;cursor:default;background:${x.o?(x.m?'#ff453a55':'var(--hover)'):'var(--accent)'};opacity:${x.o||!x.f?1:1};color:${NC[x.n]||'inherit'}`},x.o?(x.m?'':(x.n||'')):'');
+      if(x.o&&x.m)e.innerHTML=BOMB;else if(!x.o&&x.f)e.innerHTML=FLAG;e.addEventListener('click',()=>click(r,c));e.addEventListener('contextmenu',ev=>{ev.preventDefault();ev.stopPropagation();flag(r,c)});e.addEventListener('dblclick',()=>{});board.append(e)}))}
   face.onclick=reset;win.body.append(h('div',{class:'toolbar'},sel,h('span',{style:'flex:1'}),h('small',{style:'color:var(--text2)'},'Right-click to flag')),h('div',{style:'display:flex;justify-content:space-between;align-items:center;padding:8px 16px'},cnt,face,tm),h('div',{style:'flex:1;display:flex;overflow:auto'},board));
   win.closeHook(()=>clearInterval(timer));win.minesState=()=>({over,won,opened,flags,mines:cells.flat().filter(x=>x.m).length,R,Cc});win.minesPlace=mines=>{cells.forEach(r=>r.forEach(x=>{x.m=false;x.n=0;x.o=false;x.f=false}));mines.forEach(([r,c])=>cells[r][c].m=true);cells.forEach((row,r)=>row.forEach((x,c)=>{x.n=nb(r,c).filter(([a,b])=>cells[a][b].m).length}));first=false;opened=0;over=won=false;render()};win.minesClick=click;reset()}};
 
@@ -1559,7 +1629,7 @@ Apps.recorder={name:'Voice Memos',icon:ICONS.recorder,w:440,h:520,single:true,op
 /* ======================================================================= START MENU */
 function toggleStart(){const st=$('#start'),on=!st.classList.contains('show');closeOverlays();if(!on)return;st.classList.add('show');$('#stq').value='';renderStart();$('#stq').focus()}
 function renderStart(){const q=$('#stq').value.trim(),ql=q.toLowerCase(),g=$('#stgrid');g.innerHTML='';
-  const apps=Object.entries(Apps).filter(([id,a])=>a.icon&&!a.hidden&&a.name.toLowerCase().includes(ql)).sort((a,b)=>a[1].name.localeCompare(b[1].name));
+  const apps=Object.entries(Apps).filter(([id,a])=>a.icon&&!a.hidden&&isInstalled(id)&&a.name.toLowerCase().includes(ql)).sort((a,b)=>a[1].name.localeCompare(b[1].name));
   apps.forEach(([id,a],i)=>g.append(h('div',{class:'sti'+(q&&i===0?' sel':''),onclick:()=>{closeOverlays();launch(id)}},h('div',{class:'ic',html:a.icon}),a.name)));
   if(q){const as=Assist.parse(q);if(as&&!as.quiet)g.prepend(h('div',{class:'sti sel',style:'grid-column:1/-1;flex-direction:row;justify-content:flex-start;gap:12px;padding:10px 14px;font-size:13px',onclick:()=>{closeOverlays();as.fn().then(r=>toast('Aura',r),e=>toast('Error',e.message))}},h('div',{class:'ic',html:ICONS.assistant}),h('div',0,h('b',0,as.label),h('div',{class:'sub'},'Aura Assistant'))))}
   const f=$('#stfoot');f.innerHTML='';f.append(h('div',{class:'u'},h('div',{class:'avatar'},(DB.set.name[0]||'U').toUpperCase()),DB.set.name),
@@ -1572,11 +1642,11 @@ addEventListener('keyup',e=>{if(e.key==='Meta'&&metaDown){metaDown=false;if(DB.s
 function setShell(s){applyTheme({shell:s});closeOverlays()}
 
 /* ======================================================================= AURA ASSISTANT (offline, rule-based, honest) */
-const ACCENTS={blue:'#0a84ff',purple:'#bf5af2',pink:'#ff375f',red:'#ff453a',orange:'#ff9f0a',green:'#30d158',gray:'#8e8e93',grey:'#8e8e93'};
+const ACCENTS={blue:'#4c8dff',purple:'#8b7bff',pink:'#ef5f8f',red:'#e5534b',orange:'#f59e42',green:'#3fbf8a',gray:'#8e939c',grey:'#8e939c'};
 const SHELLS={mac:'mac',macos:'mac',apple:'mac',windows:'win',win:'win',linux:'linux',gnome:'linux',ubuntu:'linux'};
 const JOKES=['There are 10 kinds of people: those who know binary and those who do not.','A SQL query walks into a bar, sees two tables and asks: can I join you?','It works on my machine. Ship the machine.','I would tell you a UDP joke, but you might not get it.'];
 const Assist={
- findApp(n){n=n.toLowerCase().trim().replace(/^(the|my)\s+/,'').replace(/\s+app$/,'');if(!n)return null;const e=Object.entries(Apps).filter(([id,a])=>a.icon&&!a.hidden);return e.find(([id,a])=>a.name.toLowerCase()===n||id===n)||e.find(([id,a])=>a.name.toLowerCase().startsWith(n))||e.find(([id,a])=>a.name.toLowerCase().includes(n))||null},
+ findApp(n){n=n.toLowerCase().trim().replace(/^(the|my)\s+/,'').replace(/\s+app$/,'');if(!n)return null;const e=Object.entries(Apps).filter(([id,a])=>a.icon&&!a.hidden&&isInstalled(id));return e.find(([id,a])=>a.name.toLowerCase()===n||id===n)||e.find(([id,a])=>a.name.toLowerCase().startsWith(n))||e.find(([id,a])=>a.name.toLowerCase().includes(n))||null},
  parse(q){q=(q||'').trim();if(!q)return null;const l=q.toLowerCase().replace(/[?!.]+$/,'').replace(/^(hey |hi |ok |okay )?aura[, ]+/,'').replace(/^please\s+/,'').trim();let m;const S=DB.set;
   const I=(label,fn,quiet)=>({label,fn:async()=>fn(),quiet});
   const num=(v,a,b)=>Math.max(a,Math.min(b,+v));
@@ -1619,9 +1689,117 @@ Apps.assistant={name:'Aura',icon:ICONS.assistant,w:430,h:560,single:true,open(wi
   say('Hi, I am Aura. I can open apps, change settings, set timers, add reminders and more. Everything runs on your device, nothing is sent anywhere. Type “help” for the full list.','ai');
   win.sendAssist=send;inp.focus()}};
 
+/* ======================================================================= STORE, MEDIA, PDF, CONVERTER, VAULT, TAGS */
+const OPTIONAL={game2048:['Games','Merge tiles to reach 2048.'],snake:['Games','Classic snake. Arrow keys or WASD.'],tetris:['Games','Falling blocks, ghost piece, levels.'],mines:['Games','Clear the board without hitting a mine.'],sketch:['Creativity','Draw and save to Pictures.'],maps:['Utilities','OpenStreetMap with place search.'],focus:['Productivity','Pomodoro timer with ambient sound.'],recorder:['Utilities','Record from your microphone.'],code:['Developer','Editor that runs JavaScript and previews HTML.'],sheets:['Productivity','Spreadsheet with formulas.'],converter:['Utilities','Length, weight, temperature, data and more.'],vault:['Utilities','Generate strong random passwords locally.'],media:['Utilities','Play video and audio files.'],pdf:['Utilities','Read PDF files.'],monitor:['Developer','CPU, memory and processes.']};
+const STORE_ONLY=['converter','vault','media','pdf'];
+const isInstalled=id=>!OPTIONAL[id]||(DB.set.installed||[]).includes(id);
+function migrateInstalled(){const S=DB.set;if(!Array.isArray(S.installed))S.installed=Object.keys(OPTIONAL).filter(k=>!STORE_ONLY.includes(k)).concat(['media','pdf'])}
+function installApp(id){const S=DB.set;migrateInstalled();if(!S.installed.includes(id)){S.installed.push(id);save();Dock.render();toast('App Store',Apps[id].name+' installed')}}
+function uninstallApp(id){const S=DB.set;migrateInstalled();S.installed=S.installed.filter(x=>x!==id);S.pinned=(S.pinned||[]).filter(x=>x!==id);WM.of(id).forEach(w=>WM.close(w));save();Dock.render();toast('App Store',Apps[id].name+' removed')}
+Apps.store={name:'App Store',icon:'x',w:760,h:540,single:true,open(win){
+  migrateInstalled();let cat='All',q='';const side=h('div',{class:'sidebar',style:'width:170px'}),main=h('div',{style:'flex:1;overflow:auto;padding:16px 20px'}),search=h('input',{class:'field',placeholder:'Search apps',style:'width:100%;margin-bottom:12px',oninput:e=>{q=e.target.value.toLowerCase();draw()},onkeydown:e=>e.stopPropagation()});
+  const cats=['All','Productivity','Creativity','Games','Utilities','Developer'];
+  function draw(){side.innerHTML='';cats.forEach(c=>side.append(h('div',{class:'sb'+(c===cat?' sel':''),onclick:()=>{cat=c;draw()}},c)));main.innerHTML='';main.append(search);
+    const list=Object.entries(OPTIONAL).filter(([id,[c,d]])=>Apps[id]&&(cat==='All'||c===cat)&&(!q||Apps[id].name.toLowerCase().includes(q)||d.toLowerCase().includes(q)));
+    if(!list.length)main.append(h('div',{style:'color:var(--text2);text-align:center;margin-top:40px'},'Nothing found'));
+    const grid=h('div',{style:'display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px'});
+    list.forEach(([id,[c,d]])=>{const inst=isInstalled(id);grid.append(h('div',{class:'card',style:'margin:0;padding:12px;display:flex;gap:12px;align-items:center'},h('div',{class:'ic',style:'width:52px;height:52px;border-radius:23%;overflow:hidden;flex:none;box-shadow:0 2px 6px rgba(0,0,0,.25)',html:Apps[id].icon}),h('div',{style:'flex:1;min-width:0'},h('b',0,Apps[id].name),h('div',{class:'sub',style:'font-size:12px'},d),h('div',{class:'sub',style:'font-size:11px;opacity:.7'},c)),
+      inst?h('div',{style:'display:flex;flex-direction:column;gap:4px'},h('div',{class:'btn sm pri',onclick:()=>launch(id)},'Open'),h('div',{class:'btn sm',onclick:()=>{uninstallApp(id);draw()}},'Remove')):h('div',{class:'btn sm pri',onclick:()=>{installApp(id);draw()}},'Get')))});
+    main.append(grid);main.append(h('div',{class:'sub',style:'margin-top:16px;font-size:11.5px'},'Core apps (Finder, Settings, Terminal, Safari and others) are always installed. All apps run locally. Nothing is downloaded.'))}
+  win.body.style.flexDirection='row';win.body.append(side,main);draw();win.storeDraw=draw}};
+
+const MEDIA_EXT=/\.(mp4|webm|ogv|mov|m4v|mp3|wav|ogg|oga|m4a|flac|aac)$/i,VIDEO_EXT=/\.(mp4|webm|ogv|mov|m4v)$/i;
+const dataMime=d=>(d.match(/^data:([^;,]+)/)||[])[1]||'';
+function dataBlobUrl(d){const m=dataMime(d),bin=atob(d.split(',')[1]||''),u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return URL.createObjectURL(new Blob([u],{type:m}))}
+Apps.media={name:'Media',icon:'x',w:760,h:520,single:true,open(win,args){
+  let cur=null,url=null,el=null;const stage=h('div',{style:'flex:1;background:#0b0c0f;display:flex;align-items:center;justify-content:center;min-height:0;position:relative'}),list=h('div',{style:'width:230px;flex:none;overflow:auto;border-right:1px solid var(--line);background:var(--side)'});
+  const files=()=>{const o=[];for(const d of ['/Music','/Movies','/Downloads','/Desktop','/Documents'].map(x=>HOME+x)){try{FS.ls(d).forEach(e=>{if(e.node.t==='f'&&MEDIA_EXT.test(e.name)&&String(e.node.d).startsWith('data:'))o.push(e)})}catch{}}return o};
+  function play(path){cur=path;url&&URL.revokeObjectURL(url);stage.innerHTML='';const n=FS.get(path);if(!n){drawList();return}url=dataBlobUrl(n.d);const vid=VIDEO_EXT.test(path)||dataMime(n.d).startsWith('video');
+    el=h(vid?'video':'audio',{src:url,controls:true,autoplay:true,style:vid?'max-width:100%;max-height:100%;background:#000':'width:80%'});
+    if(!vid)stage.append(h('div',{style:'color:#fff;text-align:center;position:absolute;top:30%;width:100%'},h('div',{style:'width:110px;height:110px;margin:0 auto 14px;border-radius:22px;background:linear-gradient(135deg,#3f6fd8,#8f6bff)'}),h('b',0,FS.base(path))));
+    stage.append(el);win.setTitle(FS.base(path));drawList()}
+  function drawList(){list.innerHTML='';const fs=files();if(!fs.length)list.append(h('div',{style:'padding:18px;color:var(--text2);font-size:12.5px'},'No media yet. Import audio or video files (up to 3 MB each).'));fs.forEach(e=>list.append(h('div',{class:'nrow'+(e.path===cur?' sel':''),style:e.path===cur?'background:var(--accent);color:#fff':'',onclick:()=>play(e.path)},h('b',0,e.name),h('small',0,VIDEO_EXT.test(e.name)?'Video':'Audio · '+fmtSize(e.node.d.length)))))}
+  win.body.append(h('div',{class:'toolbar'},toolbarBtn('Import…',()=>importFiles(HOME+'/Music'),'Import media from your computer'),h('span',{style:'flex:1'}),h('small',{style:'color:var(--text2)'},'MP4 · WebM · MP3 · WAV · OGG · M4A')),h('div',{class:'split'},list,stage));
+  win.closeHook(()=>{url&&URL.revokeObjectURL(url)});win.closeHook(FS.on(()=>{if(!win.closed)drawList()}));win.mediaState=()=>({cur,tag:el&&el.tagName,dur:el&&el.duration,ready:el&&el.readyState});
+  drawList();if(args.path)play(args.path)}};
+Apps.pdf={name:'PDF Reader',icon:'x',w:760,h:620,open(win,args){
+  let url=null;const frame=h('iframe',{style:'flex:1;border:0;width:100%;background:#525659'});
+  const load=p=>{url&&URL.revokeObjectURL(url);const n=FS.get(p);if(!n||!String(n.d).startsWith('data:')){frame.removeAttribute('src');toast('PDF Reader','Not a readable PDF');return}url=dataBlobUrl(n.d);frame.src=url;win.setTitle(FS.base(p));win.pdfUrl=url};
+  win.body.append(h('div',{class:'toolbar'},toolbarBtn('Import PDF…',()=>importFiles(HOME+'/Documents')),h('span',{style:'flex:1'}),h('small',{style:'color:var(--text2)'},'Uses your browser or Electron PDF viewer')),frame);
+  win.closeHook(()=>{url&&URL.revokeObjectURL(url)});win.update=a=>a.path&&load(a.path);if(args.path)load(args.path)}};
+
+const UNITS={Length:{m:1,km:1000,cm:.01,mm:.001,mi:1609.344,yd:.9144,ft:.3048,in:.0254},Weight:{kg:1,g:.001,mg:1e-6,lb:.45359237,oz:.028349523},Data:{B:1,KB:1024,MB:1048576,GB:1073741824,TB:1099511627776},Time:{s:1,min:60,h:3600,day:86400,week:604800},Speed:{'m/s':1,'km/h':1/3.6,mph:.44704,kn:.514444},Temperature:{C:0,F:0,K:0}};
+function convertUnit(cat,v,a,b){if(cat==='Temperature'){const c=a==='C'?v:a==='F'?(v-32)*5/9:v-273.15;return b==='C'?c:b==='F'?c*9/5+32:c+273.15}const U=UNITS[cat];return v*U[a]/U[b]}
+Apps.converter={name:'Converter',icon:'x',w:420,h:340,single:true,open(win){
+  let cat='Length';const sel=h('select',{class:'field',onchange:e=>{cat=e.target.value;fill()}},Object.keys(UNITS).map(k=>h('option',{value:k},k))),v=h('input',{class:'field',type:'number',value:'1',style:'width:100%',oninput:()=>calc(),onkeydown:e=>e.stopPropagation()}),a=h('select',{class:'field',onchange:()=>calc()}),b=h('select',{class:'field',onchange:()=>calc()}),out=h('div',{style:'font-size:34px;font-weight:300;text-align:center;margin:14px 0;font-variant-numeric:tabular-nums;user-select:text'}),sub=h('div',{style:'text-align:center;color:var(--text2)'});
+  function fill(){const us=Object.keys(UNITS[cat]);[a,b].forEach((s,i)=>{s.innerHTML='';us.forEach(u=>s.append(h('option',{value:u},u)));s.selectedIndex=i?Math.min(1,us.length-1):0});calc()}
+  function calc(){const x=parseFloat(v.value);if(isNaN(x)){out.textContent='—';sub.textContent='';return}const r=convertUnit(cat,x,a.value,b.value);out.textContent=+r.toPrecision(10)+' '+b.value;sub.textContent=`${x} ${a.value} =`}
+  win.body.append(h('div',{style:'padding:18px;display:grid;gap:10px'},sel,v,a,b,sub,out));win.convState=()=>({cat,out:out.textContent});win.convSet=(c,x,f,t)=>{cat=c;sel.value=c;fill();v.value=x;a.value=f;b.value=t;calc()};fill()}};
+Apps.vault={name:'Vault',icon:'x',w:440,h:420,single:true,open(win){
+  let len=20,opts={lower:true,upper:true,num:true,sym:true};const out=h('div',{style:'font:17px var(--mono);word-break:break-all;padding:14px;background:var(--hover);border-radius:10px;min-height:56px;user-select:text'}),meter=h('div',{class:'mbar',style:'margin:8px 0'},h('i')),ent=h('div',{class:'sub'});
+  const SETS={lower:'abcdefghijkmnopqrstuvwxyz',upper:'ABCDEFGHJKLMNPQRSTUVWXYZ',num:'23456789',sym:'!@#$%^&*-_=+?'};
+  function gen(){const pool=Object.keys(opts).filter(k=>opts[k]).map(k=>SETS[k]);if(!pool.length){out.textContent='Pick at least one set';return ''}const all=pool.join(''),rnd=n=>{const b=new Uint32Array(1),lim=Math.floor(4294967296/n)*n;let x;do{crypto.getRandomValues(b);x=b[0]}while(x>=lim);return x%n};const ch=pool.map(p=>p[rnd(p.length)]);while(ch.length<len)ch.push(all[rnd(all.length)]);for(let i=ch.length-1;i>0;i--){const j=rnd(i+1);[ch[i],ch[j]]=[ch[j],ch[i]]}const pw=ch.join('');out.textContent=pw;const bits=Math.round(len*Math.log2(all.length));meter.firstChild.style.width=Math.min(100,bits/1.28)+'%';meter.firstChild.style.background=bits<50?'#e5534b':bits<80?'#f59e42':'#3fbf8a';ent.textContent=`${bits} bits of entropy · ${bits<50?'weak':bits<80?'fair':bits<110?'strong':'excellent'}`;return pw}
+  const row=(l,k)=>h('label',{style:'display:flex;gap:6px;align-items:center'},h('input',{type:'checkbox',checked:opts[k],onchange:e=>{opts[k]=e.target.checked;gen()}}),l);
+  const lenIn=h('input',{type:'range',min:8,max:64,value:len,style:'flex:1;margin:0',oninput:e=>{len=+e.target.value;lenL.textContent=len;gen()}}),lenL=h('b',{style:'width:26px'},String(len));
+  win.body.append(h('div',{style:'padding:16px;display:grid;gap:10px'},out,meter,ent,h('div',{style:'display:flex;gap:10px;align-items:center'},'Length',lenIn,lenL),h('div',{style:'display:flex;gap:14px;flex-wrap:wrap'},row('a-z','lower'),row('A-Z','upper'),row('0-9','num'),row('Symbols','sym')),h('div',{style:'display:flex;gap:8px'},h('div',{class:'btn pri',onclick:gen},'Generate'),h('div',{class:'btn',onclick:()=>{navigator.clipboard&&navigator.clipboard.writeText(out.textContent).then(()=>toast('Vault','Copied. Clear your clipboard when done.'),()=>toast('Vault','Copy blocked by the browser'))}},'Copy'))));
+  win.vaultGen=gen;win.vaultSet=o=>{Object.assign(opts,o.opts||{});if(o.len){len=o.len}return gen()};gen()}};
+
+/* ---- file tags ---- */
+const TAGS={red:'#e5534b',orange:'#f59e42',yellow:'#e8c33e',green:'#3fbf8a',blue:'#4c8dff',purple:'#8b7bff',gray:'#8e939c'};
+function setTags(paths,tags){paths.forEach(p=>{const n=FS.get(p);if(n){if(tags.length)n.tags=tags;else delete n.tags}});FS.emit()}
+function tagged(c){const o=[];try{FS.walk('/',e=>{if((e.node.tags||[]).includes(c))o.push(e)})}catch{}return o}
+function tagPicker(paths){const d=$('#dlg');let cur=new Set((FS.get(paths[0])||{}).tags||[]);const chips=h('div',{style:'display:flex;gap:10px;justify-content:center;margin:6px 0 14px'});
+  const draw=()=>{chips.innerHTML='';Object.entries(TAGS).forEach(([k,c])=>chips.append(h('i',{title:k,style:`width:26px;height:26px;border-radius:50%;background:${c};cursor:default;box-shadow:${cur.has(k)?'0 0 0 2px var(--win),0 0 0 4px '+c:'none'}`,onclick:()=>{cur.has(k)?cur.delete(k):cur.add(k);draw()}})))};draw();
+  const done=ok=>{d.classList.remove('show');d.innerHTML='';if(ok)setTags(paths,[...cur])};
+  d.innerHTML='';d.append(h('div',{class:'sheet'},h('h3',0,'Tags'),h('p',0,paths.length>1?paths.length+' items':FS.base(paths[0])),chips,h('div',{class:'btns'},h('div',{class:'btn',onclick:()=>done(false)},'Cancel'),h('div',{class:'btn pri',onclick:()=>done(true)},'Done'))));d.classList.add('show')}
+const tagDots=n=>(n.tags&&n.tags.length)?h('span',{class:'tdots'},n.tags.map(t=>h('i',{style:'background:'+(TAGS[t]||'#888')}))):null;
+
+/* ======================================================================= ICON SYSTEM: one grammar, muted two-tone squircle + single stroke glyph */
+const _gi=(id,a,b,g,sw=1.9)=>`<svg viewBox="0 0 100 100"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><rect width="100" height="100" fill="url(#${id})"/><rect width="100" height="50" fill="#fff" opacity=".07"/><g transform="translate(23 23) scale(2.25)" stroke="#fff" stroke-width="${sw}" fill="none" stroke-linecap="round" stroke-linejoin="round">${g}</g></svg>`;
+const SKIN={
+ finder:_gi('k1','#58a6ff','#2b6fe0','<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>'),
+ terminal:_gi('k2','#3a4150','#1b1f27','<path d="M4 6l6 6-6 6M12 18h8"/>'),
+ notes:_gi('k3','#f5c451','#e0a21c','<path d="M6 3h9l4 4v14H6zM14 3v5h5M9 13h7M9 17h5"/>'),
+ textedit:_gi('k4','#8b95a7','#5d6677','<path d="M5 6h14M5 11h14M5 16h9"/>'),
+ calculator:_gi('k5','#4b525e','#272b33','<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01"/>'),
+ settings:_gi('k6','#98a0ad','#667080','<circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/>'),
+ safari:_gi('k7','#45c3e8','#2279d6','<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/>'),
+ sketch:_gi('k8','#f27aa4','#d6406f','<path d="M4 20l1-4L16 5l3 3L8 19zM14 7l3 3"/>'),
+ snake:_gi('k9','#4fcf8d','#1f9f62','<path d="M5 18V8h6v6h6V6"/><circle cx="17" cy="5" r="1.2" fill="#fff"/>'),
+ monitor:_gi('k10','#3f4a43','#1d2420','<path d="M3 12h4l3-7 4 14 3-7h4" stroke="#6ee7a8"/>'),
+ preview:_gi('k11','#46c2b8','#1f8f94','<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.5"/><path d="M21 16l-5-5-8 8"/>'),
+ trash:_gi('k12','#9aa1ad','#6a7280','<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>'),
+ launchpad:_gi('k13','#6c7686','#444c5a','<path d="M6 6h.01M12 6h.01M18 6h.01M6 12h.01M12 12h.01M18 12h.01M6 18h.01M12 18h.01M18 18h.01" stroke-width="3.2"/>'),
+ music:_gi('k14','#f56a7a','#d02f55','<path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/>'),
+ photos:_gi('k15','#f6a05a','#e0623f','<path d="M3 18l5-6 4 4 3-3 6 5"/><circle cx="16" cy="8" r="2"/><rect x="3" y="4" width="18" height="16" rx="2"/>'),
+ clock:_gi('k17','#555d6b','#2b303a','<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke="#f59e42"/>'),
+ reminders:_gi('k18','#6e8cff','#4655d6','<path d="M5 7l2 2 3-4M5 16l2 2 3-4M13 8h7M13 17h7"/>'),
+ g2048:_gi('k19','#f2a65a','#d9733a','<path d="M4 8h5M9 8v4H4v4h5M14 8h3v8M14 8v4h3M20 8v8" stroke-width="1.7"/>'),
+ weather:_gi('k20','#5cb6f5','#2f7fd9','<path d="M7 18a4 4 0 0 1-.5-8A5.5 5.5 0 0 1 17 8.5a4 4 0 0 1 0 9.5z"/>'),
+ camera:_gi('k21','#59616f','#30353f','<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>'),
+ sysinfo:_gi('k22','#8a86d6','#5b57b0','<rect x="7" y="7" width="10" height="10" rx="1"/><path d="M9 3v4M15 3v4M9 17v4M15 17v4M3 9h4M3 15h4M17 9h4M17 15h4"/>'),
+ assistant:_gi('k23','#9a7cff','#6a4fe0','<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/>'),
+ code:_gi('k24','#2f3a45','#161c23','<path d="M9 7l-5 5 5 5M15 7l5 5-5 5" stroke="#5eead4"/>'),
+ sheets:_gi('k25','#43c986','#1f9457','<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10h16M4 15h16M10 4v16"/>'),
+ tetris:_gi('k26','#7a7ee0','#4a4fb5','<path d="M4 4h6v6H4zM10 10h6v6h-6zM10 4h6v6M16 10h4v6" stroke-width="1.7"/>'),
+ mines:_gi('k27','#707a88','#444c59','<circle cx="12" cy="13" r="5"/><path d="M12 4v3M12 19v3M4 13h3M17 13h3M6.5 7.5l2 2M15.5 16.5l2 2M17.5 7.5l-2 2M8.5 16.5l-2 2"/>'),
+ maps:_gi('k28','#4fbf9f','#1f8a74','<path d="M12 21s-6-5.5-6-11a6 6 0 0 1 12 0c0 5.5-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/>'),
+ focus:_gi('k29','#f47c5e','#d1433f','<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5"/>'),
+ recorder:_gi('k30','#e5534b','#a82a3a','<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>'),
+ store:_gi('k31','#5b8cff','#3a58e0','<path d="M5 8h14l-1 12H6zM9 8a3 3 0 0 1 6 0"/>'),
+ media:_gi('k32','#2c3340','#12161d','<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9.5v5l4.5-2.5z" fill="#fff"/>'),
+ converter:_gi('k34','#5a90f0','#3558c8','<path d="M7 7h11l-3-3M17 17H6l3 3"/>'),
+ vault:_gi('k35','#3ec6b8','#1d8b8b','<circle cx="8" cy="15" r="3.5"/><path d="M10.5 12.5L20 3M16 7l3 3"/>'),
+ pdf:_gi('k33','#e8625a','#b83a3a','<path d="M6 3h9l4 4v14H6zM14 3v5h5"/><path d="M9 15h6M9 18h4" stroke-width="1.7"/>')
+};
+SKIN.calendar=`<svg viewBox="0 0 100 100"><rect width="100" height="100" fill="#fff"/><rect width="100" height="31" fill="#e5534b"/><text x="50" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#fff" font-family="system-ui,sans-serif" letter-spacing="1">${MONTHS[new Date().getMonth()].toUpperCase()}</text><text x="50" y="79" text-anchor="middle" font-size="46" font-weight="300" fill="#2a2d33" font-family="system-ui,sans-serif">${new Date().getDate()}</text></svg>`;
+SKIN.finder_=SKIN.finder;
+Object.assign(ICONS,SKIN);
+Object.keys(Apps).forEach(id=>{const k=id==='game2048'?'g2048':id;if(SKIN[k]&&Apps[id].icon)Apps[id].icon=SKIN[k]});
+
 /* ======================================================================= BOOT */
 function init(){
-  Player.on(()=>{if($('#cc.show'))buildCC()});Sys.on(()=>{if($('#cc.show'))buildCC()});Sys.init();Cloud.init();
+  Player.on(()=>{if($('#cc.show'))buildCC()});Sys.on(()=>{if($('#cc.show'))buildCC()});Sys.init();Cloud.init();Native.load();
   const PWA=window.PWA={ev:null,get installed(){return matchMedia('(display-mode: standalone)').matches||navigator.standalone===true||!!window.auraNative},
     async install(){if(!this.ev)return false;this.ev.prompt();const r=await this.ev.userChoice;this.ev=null;Sys.emit(true);return r.outcome==='accepted'}};
   addEventListener('beforeinstallprompt',e=>{e.preventDefault();PWA.ev=e;Sys.emit(true)});
@@ -1629,7 +1807,7 @@ function init(){
   if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)&&!window.auraNative)navigator.serviceWorker.register('sw.js').catch(()=>{});
   setInterval(tick,1000);
   loadUser();
-  window.AuraOS={Cloud,Sys,Weather,launch,WM,FS,Apps,DB,toast,applyTheme,lockScreen,Player,Widgets,logout,loadUser,dataChanged,Assist,setShell,toggleStart,openFile};
+  window.AuraOS={Cloud,Sys,Weather,launch,WM,FS,Apps,DB,toast,applyTheme,lockScreen,Player,Widgets,logout,loadUser,dataChanged,Assist,setShell,toggleStart,openFile,isInstalled,installApp,uninstallApp,tagged,setTags,Native};
   startBoot();
 }
 init();
