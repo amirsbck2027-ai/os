@@ -1,0 +1,28 @@
+{
+  "name": "aura-os-desktop",
+  "productName": "Aura OS",
+  "version": "1.0.0",
+  "description": "Aura OS desktop app (Electron wrapper)",
+  "main": "main.js",
+  "author": "Aura OS",
+  "license": "MIT",
+  "scripts": {
+    "sync": "node scripts/sync-app.js",
+    "start": "npm run sync && electron .",
+    "test": "node --test test/*.test.js",
+    "dist": "npm run sync && electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^45.2.1",
+    "electron-builder": "^26.18.0"
+  },
+  "build": {
+    "appId": "os.aura.desktop",
+    "productName": "Aura OS",
+    "files": ["main.js", "preload.js", "wifi.js", "app/**/*", "package.json"],
+    "directories": { "output": "dist" },
+    "win": { "target": ["nsis", "portable"], "icon": "app/icons/icon-512.png" },
+    "mac": { "target": ["dmg", "zip"], "category": "public.app-category.utilities", "icon": "app/icons/icon-512.png", "extendInfo": { "NSLocationUsageDescription": "Aura OS needs Location access to read nearby Wi-Fi network names.", "NSBluetoothAlwaysUsageDescription": "Aura OS connects to your Bluetooth devices.", "NSCameraUsageDescription": "Aura OS Camera app." } },
+    "linux": { "target": ["AppImage", "deb"], "category": "Utility", "icon": "app/icons/icon-512.png" }
+  }
+}

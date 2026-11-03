@@ -1,0 +1,28 @@
+name: CI
+on:
+  push:
+  pull_request:
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm i --no-save playwright && npx playwright install --with-deps chromium
+      - name: End-to-end tests (web app)
+        run: |
+          python3 -m http.server 8765 &
+          sleep 1
+          mkdir -p shots
+          node tests/e2e.js http://localhost:8765/index.html shots
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: screenshots, path: shots }
+  desktop-unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: cd desktop && npm test

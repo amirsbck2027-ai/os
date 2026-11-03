@@ -195,7 +195,7 @@ textarea.edit{flex:1;border:0;outline:none;resize:none;background:var(--win);pad
 .calc button.z{grid-column:span 2;text-align:left;padding-left:22px}
 .notes-list{width:200px;flex:none;border-right:1px solid var(--line);overflow:auto;background:var(--side)}
 .nrow{padding:8px 12px;border-bottom:1px solid var(--line);cursor:default}.nrow.sel{background:#ffd60a;color:#000}.nrow b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.nrow small{opacity:.65}
-.browser-view{flex:1;border:0;background:#fff;width:100%}
+.browser-view{flex:1;border:0;background:#fff;width:100%}webview.browser-view{display:flex}
 .startpage{flex:1;overflow:auto;background:linear-gradient(160deg,#eef2ff,#f5f0ff);color:#222;display:flex;flex-direction:column;align-items:center;padding-top:60px;gap:26px}
 :root.dark .startpage{background:linear-gradient(160deg,#16181f,#1c1626);color:#eee}
 .favs{display:grid;grid-template-columns:repeat(4,90px);gap:18px}
@@ -852,15 +852,21 @@ Apps.calculator={name:'Calculator',icon:ICONS.calculator,w:280,h:430,single:true
 Apps.safari={name:'Safari',icon:ICONS.safari,w:880,h:560,open(win,args){
   const hist=[],view=h('div',{style:'flex:1;display:flex;flex-direction:column;min-height:0'});let idx=-1;
   const url=h('input',{class:'field',style:'flex:1;text-align:center;border-radius:8px',placeholder:'Search or enter website name',onkeydown:e=>{e.stopPropagation();if(e.key==='Enter'){load(url.value)}}});
-  const back=toolbarBtn('‹',()=>step(-1)),fwd=toolbarBtn('›',()=>step(1)),home=toolbarBtn('⌂',()=>load('about:home'),'Home'),ext_=toolbarBtn('↗',()=>{if(hist[idx]&&hist[idx]!=='about:home')window.open(hist[idx],'_blank','noopener')},'Open in a real browser tab');
+  const back=toolbarBtn('‹',()=>step(-1)),fwd=toolbarBtn('›',()=>step(1)),home=toolbarBtn('⌂',()=>load('about:home'),'Home'),ext_=toolbarBtn('↗',()=>{if(hist[idx]&&hist[idx]!=='about:home')window.auraNative?window.auraNative.openExternal(hist[idx]):window.open(hist[idx],'_blank','noopener')},'Open in a real browser tab');
   win.body.append(h('div',{class:'toolbar'},back,fwd,home,url,toolbarBtn('⟳',()=>load(hist[idx],true)),ext_),view);
   function norm(v){v=v.trim();if(!v||v==='about:home')return 'about:home';if(/^https?:\/\//i.test(v))return v;if(/^[\w-]+(\.[\w-]+)+(\/\S*)?$/.test(v))return 'https://'+v;return 'https://en.wikipedia.org/w/index.php?search='+encodeURIComponent(v)}
   function load(v,re){const u=norm(v);if(!re){hist.splice(idx+1);hist.push(u);idx=hist.length-1}show(u)}
   function step(d){const i=idx+d;if(i<0||i>=hist.length)return;idx=i;show(hist[i])}
   function show(u){back.disabled=idx<=0;fwd.disabled=idx>=hist.length-1;view.innerHTML='';url.value=u==='about:home'?'':u;
     if(u==='about:home'){win.setTitle('Start Page');const fav=(n,c,l,u2)=>h('div',{class:'fav',onclick:()=>load(u2)},h('i',{style:'background:'+c},l),n);
-      view.append(h('div',{class:'startpage'},h('div',{style:'font-size:30px;font-weight:700'},'Favorites'),h('div',{class:'favs'},fav('Wikipedia','#4a4a4a','W','https://en.wikipedia.org'),fav('OpenStreetMap','#58a55c','M','https://www.openstreetmap.org/export/embed.html'),fav('Wikimedia','#2f6fd0','C','https://commons.wikimedia.org'),fav('Example','#ff9f0a','E','https://example.com')),h('div',{style:'max-width:480px;text-align:center;opacity:.65;font-size:12px'},'Tip: type a search and it opens in Wikipedia. Many websites block being shown inside other pages — use ↗ to open them in a real tab.')));return}
-    win.setTitle(u.replace(/^https?:\/\//,'').split('/')[0]);const fr=h('iframe',{class:'browser-view',src:u,referrerpolicy:'no-referrer',sandbox:'allow-scripts allow-same-origin allow-forms allow-popups'});view.append(fr)}
+      view.append(h('div',{class:'startpage'},h('div',{style:'font-size:30px;font-weight:700'},'Favorites'),h('div',{class:'favs'},fav('Wikipedia','#4a4a4a','W','https://en.wikipedia.org'),fav('OpenStreetMap','#58a55c','M','https://www.openstreetmap.org/export/embed.html'),fav('Wikimedia','#2f6fd0','C','https://commons.wikimedia.org'),fav('Example','#ff9f0a','E','https://example.com')),h('div',{style:'max-width:480px;text-align:center;opacity:.65;font-size:12px'},'Tip: type a search and it opens in Wikipedia. Many websites block being shown inside other pages — use ↗ to open them in a real tab (the desktop app has no such limit).')));return}
+    win.setTitle(u.replace(/^https?:\/\//,'').split('/')[0]);let fr;
+    if(window.auraNative){/* desktop app: a real browser view, no iframe restrictions */
+      fr=h('webview',{class:'browser-view',src:u,partition:'persist:aura-safari'});
+      fr.addEventListener('did-navigate',e=>{if(e.url!==hist[idx]){hist.splice(idx+1);hist.push(e.url);idx=hist.length-1}url.value=e.url;back.disabled=idx<=0;fwd.disabled=idx>=hist.length-1});
+      fr.addEventListener('page-title-updated',e=>win.setTitle(e.title))}
+    else fr=h('iframe',{class:'browser-view',src:u,referrerpolicy:'no-referrer',sandbox:'allow-scripts allow-same-origin allow-forms allow-popups'});
+    view.append(fr)}
   load(args.url||'about:home')}};
 
 /* ---------- Sketch ---------- */
