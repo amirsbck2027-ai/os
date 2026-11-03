@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
-      - run: npm install --no-audit --no-fund && npm run build && touch dist/.nojekyll
+      - run: npm install --no-audit --no-fund && npm run build && mkdir -p dist/download && cp site/index.html dist/download/index.html && touch dist/.nojekyll
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with: { path: dist }

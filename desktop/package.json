@@ -19,10 +19,56 @@
   "build": {
     "appId": "os.aura.desktop",
     "productName": "Aura OS",
-    "files": ["main.js", "preload.js", "wifi.js", "system.js", "app/**/*", "package.json"],
-    "directories": { "output": "dist" },
-    "win": { "target": ["nsis", "portable"], "icon": "app/icons/icon-512.png" },
-    "mac": { "target": ["dmg", "zip"], "category": "public.app-category.utilities", "icon": "app/icons/icon-512.png", "extendInfo": { "NSLocationUsageDescription": "Aura OS needs Location access to read nearby Wi-Fi network names.", "NSBluetoothAlwaysUsageDescription": "Aura OS connects to your Bluetooth devices.", "NSCameraUsageDescription": "Aura OS Camera app." } },
-    "linux": { "target": ["AppImage", "deb"], "category": "Utility", "icon": "app/icons/icon-512.png" }
+    "files": [
+      "main.js",
+      "preload.js",
+      "wifi.js",
+      "system.js",
+      "app/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis"
+        },
+        {
+          "target": "portable"
+        }
+      ],
+      "icon": "app/icons/icon-512.png"
+    },
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "category": "public.app-category.utilities",
+      "icon": "app/icons/icon-512.png",
+      "extendInfo": {
+        "NSLocationUsageDescription": "Aura OS needs Location access to read nearby Wi-Fi network names.",
+        "NSBluetoothAlwaysUsageDescription": "Aura OS connects to your Bluetooth devices.",
+        "NSCameraUsageDescription": "Aura OS Camera app."
+      },
+      "artifactName": "Aura-OS-mac.${ext}"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Utility",
+      "icon": "app/icons/icon-512.png",
+      "artifactName": "Aura-OS-linux.${ext}"
+    },
+    "nsis": {
+      "artifactName": "Aura-OS-Setup.${ext}"
+    },
+    "portable": {
+      "artifactName": "Aura-OS-Portable.${ext}"
+    }
   }
 }

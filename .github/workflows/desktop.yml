@@ -38,10 +38,14 @@ jobs:
             desktop/dist/*.zip
             desktop/dist/*.AppImage
             desktop/dist/*.deb
-      - name: Attach to GitHub release
-        if: startsWith(github.ref, 'refs/tags/v')
+      - name: Publish to the rolling "latest" release (download page links here)
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || 'desktop-latest' }}
+          name: Aura OS desktop app
+          body: Unsigned builds. See the download page for install notes.
+          make_latest: true
+          overwrite_files: true
           files: |
             desktop/dist/*.exe
             desktop/dist/*.dmg
