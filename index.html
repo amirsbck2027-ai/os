@@ -463,6 +463,12 @@ html,body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;l
 #lock .date{text-shadow:0 2px 14px rgba(0,0,0,.25)}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 :root.lite .window,:root.lite #dock,:root.lite .wd{box-shadow:var(--shadow-off)}
+
+.mus .vrow{display:flex;align-items:center;gap:10px;color:var(--text2);margin-top:6px;width:200px}
+.mus .vrow svg{flex:none;opacity:.8}
+input[type=range].vslider{height:5px;border-radius:3px;overflow:visible;margin:0;flex:1;background:linear-gradient(to right,var(--accent) var(--v,50%),rgba(128,128,128,.3) var(--v,50%))}
+input[type=range].vslider::-webkit-slider-thumb{width:15px;height:15px;box-shadow:0 1px 4px rgba(0,0,0,.4),0 0 0 .5px rgba(0,0,0,.15)}
+input[type=range].vslider::-moz-range-thumb{width:15px;height:15px}
 </style>
 </head>
 <body>
@@ -1231,7 +1237,8 @@ addEventListener('keyup',e=>{if(e.key==='Alt'&&swc){const w=swc.list[swc.i];swc=
 Apps.music={name:'Music',icon:ICONS.music,w:720,h:440,single:true,open(win){
   const tl=h('div',{class:'tl'}),cover=h('div',{class:'cover'}),title=h('div',{style:'font-size:20px;font-weight:700'}),art=h('div',{style:'color:var(--text2)'}),prog=h('div',{class:'prog'},h('i')),viz=h('canvas',{width:300,height:54,style:'max-width:90%'});
   const pp=h('button',{class:'pp',title:'Play/Pause',onclick:()=>Player.toggle()}),shuf=h('button',{title:'Shuffle',html:IC.shuf,onclick:()=>{Player.shuffle=!Player.shuffle;draw()}});
-  const vol=h('input',{type:'range',min:0,max:100,value:DB.set.volume,style:'width:120px;margin:0',oninput:e=>{DB.set.volume=+e.target.value;Player.vol();save()}});
+  const vi=h('input',{type:'range',class:'vslider',min:0,max:100,value:DB.set.volume,'aria-label':'Volume',oninput:e=>{DB.set.volume=+e.target.value;e.target.style.setProperty('--v',e.target.value+'%');Player.vol();save()}});vi.style.setProperty('--v',DB.set.volume+'%');
+  const vol=h('div',{class:'vrow'},h('span',{html:ico('speaker',15)}),vi,h('span',{html:ico('speaker',17)}));
   const np=h('div',{class:'np'},cover,title,art,prog,h('div',{class:'ctl'},shuf,h('button',{title:'Previous',html:IC.prev,onclick:()=>Player.prev()}),pp,h('button',{title:'Next',html:IC.next,onclick:()=>Player.next()}),h('span',{style:'width:42px'})),viz,vol);
   win.body.append(h('div',{class:'mus'},tl,np));
   const cx=viz.getContext('2d'),buf=new Uint8Array(32);let raf=0,last=0;
