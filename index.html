@@ -276,6 +276,9 @@ canvas{display:block}
 .rem{flex:1;overflow:auto;padding:16px 24px;user-select:text}
 .rem .wt{max-width:none;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
 .tabs{display:flex;gap:2px;background:var(--hover);border-radius:8px;padding:2px}.tabs div{padding:3px 12px;border-radius:6px;cursor:default}.tabs div.sel{background:var(--win);box-shadow:0 1px 3px rgba(0,0,0,.2)}
+
+.titlebar,.rz{touch-action:none}
+@media(max-width:760px){#dock{max-width:96vw;overflow-x:auto;overflow-y:hidden;gap:4px}.di{--s:42px!important}#mbl .mb:nth-child(n+3){display:none}#mbbat span{display:none}.lpi .ic{width:64px;height:64px}#lpgrid{grid-template-columns:repeat(auto-fill,90px)}#nc{width:100%}}
 </style>
 </head>
 <body>
@@ -302,7 +305,7 @@ canvas{display:block}
 <div id="dlg"></div>
 <div id="bright"></div>
 <script>
-(()=>{
+(async()=>{
 'use strict';
 /* ============ helpers ============ */
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
@@ -330,7 +333,15 @@ function seed(){
   mk(HOME+'/Documents/Notes').c['Note 1.txt']=file('Hello from Notes\nThis note autosaves as you type.');
   samplePhotos(mk(HOME+'/Pictures'));return {fs,set:defSet()};
 }
-let DB;try{DB=JSON.parse(localStorage.getItem(KEY))}catch{}
+const Store={dead:false,_db:null,
+ open(){if(this._db)return this._db;return this._db=new Promise((res,rej)=>{if(!window.indexedDB)return rej(Error('no idb'));const r=indexedDB.open('aura-os',1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})},
+ async get(k){const db=await this.open();return new Promise((res,rej)=>{const q=db.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)})},
+ async set(k,v){const db=await this.open();return new Promise((res,rej)=>{const t=db.transaction('kv','readwrite');t.objectStore('kv').put(v,k);t.oncomplete=()=>res();t.onerror=()=>rej(t.error)})},
+ async load(){let d=null;try{d=await this.get('db')}catch{}if(d)return d;try{const o=JSON.parse(localStorage.getItem(KEY));if(o&&o.fs)return o}catch{}return null},
+ async put(db){if(this.dead)return;try{await this.set('db',db);try{localStorage.removeItem(KEY)}catch{}}catch(e){localStorage.setItem(KEY,JSON.stringify(db))}},
+ async wipe(){this.dead=true;try{await this.set('db',null)}catch{}try{localStorage.removeItem(KEY)}catch{}}};
+try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch{}
+let DB=await Store.load();
 if(!DB||!DB.fs)DB=seed();
 if(!DB.users){DB.users={user:{set:Object.assign(defSet(),DB.set||{})}};DB.current='user'}
 delete DB.set;
@@ -339,8 +350,8 @@ if(!DB.users[DB.current])DB.current=Object.keys(DB.users)[0];
 if(!DB.v2){DB.v2=1;const pn=DB.fs.c.Users&&DB.fs.c.Users.c.user&&DB.fs.c.Users.c.user.c.Pictures;if(pn&&!Object.keys(pn.c).length)samplePhotos(pn)}
 Object.defineProperty(DB,'set',{get(){return DB.users[DB.current].set},enumerable:false});
 HOME='/Users/'+DB.current;
-let saveT;const save=()=>{clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){toast('Error','Disk is full — free up space.')}},400)};
-addEventListener('pagehide',()=>{try{localStorage.setItem(KEY,JSON.stringify(DB))}catch{}});
+let saveT;const flush=()=>{clearTimeout(saveT);Store.put(DB).catch(()=>toast('Error','Could not save to disk — storage full?'))};const save=()=>{clearTimeout(saveT);saveT=setTimeout(flush,500)};
+addEventListener('pagehide',flush);addEventListener('visibilitychange',()=>{if(document.hidden)flush()});
 const FS={
   L:new Set(),on(f){this.L.add(f);return()=>this.L.delete(f)},emit(){save();if(this._q)return;this._q=requestAnimationFrame(()=>{this._q=0;this.L.forEach(f=>f())})},
   parts:p=>p.split('/').filter(Boolean),
@@ -429,29 +440,29 @@ const WM={wins:[],z:100,active:null,n:0,
   this.wins.push(w);$('#windows').append(el);
   el.addEventListener('mousedown',()=>this.focus(w),true);
   tb.addEventListener('dblclick',e=>{if(!e.target.closest('.traffic'))this.toggleMax(w)});
-  this.dragSetup(w);this.focus(w);Dock.render();
+  this.dragSetup(w);this.focus(w);Dock.render();if(innerWidth<760)this.snap(w,'full');
   return w},
  snapGeom(m){const W=innerWidth,H=innerHeight-26;return m==='full'?{l:0,t:26,w:W,h:H}:m==='left'?{l:0,t:26,w:W/2,h:H}:{l:W/2,t:26,w:W/2,h:H}},
  snap(w,m){const el=w.el,g=this.snapGeom(m);if(!w.max)w.prev={l:el.offsetLeft,t:el.offsetTop,w:el.offsetWidth,h:el.offsetHeight};el.classList.add('anim');setTimeout(()=>el.classList.remove('anim'),300);Object.assign(el.style,{left:g.l+'px',top:g.t+'px',width:g.w+'px',height:g.h+'px'});el.classList.toggle('max',m==='full');w.max=true;setTimeout(()=>w.body.dispatchEvent(new Event('resized')),300)},
  dragSetup(w){const {el,tb}=w;
-  tb.addEventListener('mousedown',e=>{if(e.target.closest('.traffic')||e.button!==0)return;e.preventDefault();
+  tb.addEventListener('pointerdown',e=>{if(e.target.closest('.traffic')||e.button!==0)return;e.preventDefault();
     let sx=e.clientX,sy=e.clientY,ox=el.offsetLeft,oy=el.offsetTop,snap=null,moved=false;const pv=$('#snapPrev');
     const mv=ev=>{
       if(w.max&&!moved){if(Math.abs(ev.clientX-sx)+Math.abs(ev.clientY-sy)<5)return;const r=w.prev,rel=(sx-el.offsetLeft)/el.offsetWidth;el.classList.remove('max');w.max=false;el.style.width=r.w+'px';el.style.height=r.h+'px';ox=ev.clientX-r.w*rel;oy=26;sx=ev.clientX;sy=ev.clientY;w.body.dispatchEvent(new Event('resized'))}
       moved=true;el.style.left=(ox+ev.clientX-sx)+'px';el.style.top=clamp(oy+ev.clientY-sy,26,innerHeight-40)+'px';
       snap=ev.clientY<=3?'full':ev.clientX<=3?'left':ev.clientX>=innerWidth-4?'right':null;
       if(snap){const g=WM.snapGeom(snap);Object.assign(pv.style,{display:'block',left:g.l+'px',top:g.t+'px',width:g.w+'px',height:g.h+'px'})}else pv.style.display='none'};
-    const up=()=>{document.removeEventListener('mousemove',mv);document.removeEventListener('mouseup',up);pv.style.display='none';if(snap)WM.snap(w,snap)};
-    document.addEventListener('mousemove',mv);document.addEventListener('mouseup',up)});
-  $$('.rz',el).forEach(r=>r.addEventListener('mousedown',e=>{e.preventDefault();e.stopPropagation();this.focus(w);if(w.max){w.max=false;el.classList.remove('max')}const d=r.dataset.d,sx=e.clientX,sy=e.clientY,L=el.offsetLeft,T=el.offsetTop,Wd=el.offsetWidth,Ht=el.offsetHeight;const mw=parseInt(getComputedStyle(el).minWidth),mh=parseInt(getComputedStyle(el).minHeight);
+    const up=()=>{document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);pv.style.display='none';if(snap)WM.snap(w,snap)};
+    document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up)});
+  $$('.rz',el).forEach(r=>r.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();this.focus(w);if(w.max){w.max=false;el.classList.remove('max')}const d=r.dataset.d,sx=e.clientX,sy=e.clientY,L=el.offsetLeft,T=el.offsetTop,Wd=el.offsetWidth,Ht=el.offsetHeight;const mw=parseInt(getComputedStyle(el).minWidth),mh=parseInt(getComputedStyle(el).minHeight);
     const ov=h('div',{style:'position:fixed;inset:0;z-index:99998;cursor:'+getComputedStyle(r).cursor});document.body.append(ov);let raf=0,last=null;
     const apply=()=>{raf=0;const ev=last,dx=ev.clientX-sx,dy=ev.clientY-sy;let nl=L,nt=T,nw=Wd,nh=Ht;
       if(d.includes('e'))nw=Math.max(mw,Wd+dx);if(d.includes('s'))nh=Math.max(mh,Ht+dy);
       if(d.includes('w')){nw=Math.max(mw,Wd-dx);nl=L+Wd-nw}if(d.includes('n')){nh=Math.max(mh,Ht-dy);nt=Math.max(26,T+Ht-nh);nh=T+Ht-nt}
       Object.assign(el.style,{left:nl+'px',top:nt+'px',width:nw+'px',height:nh+'px'})};
     const mv=ev=>{last=ev;if(!raf)raf=requestAnimationFrame(apply)};
-    const up=()=>{ov.remove();document.removeEventListener('mousemove',mv);document.removeEventListener('mouseup',up);if(last)apply();w.body.dispatchEvent(new Event('resized'))};
-    document.addEventListener('mousemove',mv);document.addEventListener('mouseup',up)}))},
+    const up=()=>{ov.remove();document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);if(last)apply();w.body.dispatchEvent(new Event('resized'))};
+    document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up)}))},
  focus(w){if(w.minimized)this.restore(w,true);this.active=w;w.el.style.zIndex=++this.z;this.wins.forEach(x=>x.el.classList.toggle('inactive',x!==w));MenuBar.render();Dock.render()},
  blur(){this.active=null;this.wins.forEach(x=>x.el.classList.add('inactive'));MenuBar.render()},
  minimize(w){w.minimized=true;const di=$(`.di[data-app="${w.app}"]`);if(di){const r=di.getBoundingClientRect(),b=w.el.getBoundingClientRect();w.el.style.transformOrigin=`${r.left+r.width/2-b.left}px ${r.top-b.top}px`}w.el.classList.add('minimized');
@@ -490,6 +501,8 @@ function closeMenus(){$('#mdd')?.remove();MenuBar.open?.classList.remove('open')
 // make logo hover work with its items
 function fixLogo(){const lg=$('#mblogo');}
 
+function exportBackup(){const blob=new Blob([JSON.stringify(DB)],{type:'application/json'});const a=h('a',{href:URL.createObjectURL(blob),download:`aura-os-backup-${new Date().toISOString().slice(0,10)}.json`});document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000)}
+function importBackup(){const inp=h('input',{type:'file',accept:'.json,application/json',style:'display:none'});inp.onchange=async()=>{try{const o=JSON.parse(await inp.files[0].text());if(!o.fs||!o.users)throw Error('Not an Aura OS backup');if(!(await confirmD('Restore backup?','This replaces ALL current files, users and settings.')))return;Store.dead=false;await Store.put(o);Store.dead=true;location.reload()}catch(e){toast('Error',e.message)}};document.body.append(inp);inp.click();setTimeout(()=>inp.remove(),60000)}
 function aboutOS(){dialog({title:'Aura OS 1.0',msg:`A macOS/iOS-inspired desktop OS running in your browser.\nUser: ${DB.set.name} · Files: ${fmtSize(FS.size(DB.fs))} · ${navigator.hardwareConcurrency||4} cores`,buttons:['OK']})}
 
 /* clock + status */
@@ -580,8 +593,13 @@ function prepLock(){const S=DB.set;$('#lock .avatar').textContent=(S.name[0]||'U
   tick();setTimeout(()=>(S.pass?pw:$('#lock')).focus?.(),50)}
 function loadUser(){HOME='/Users/'+DB.current;if(!FS.isDir(HOME))mkHome(DB.current);applyTheme();renderDesktop();buildStatus();buildCC();Widgets.build();Dock.render();MenuBar.render();prepLock()}
 function logout(){[...WM.wins].forEach(w=>WM.close(w));Player.pause();closeOverlays();lockScreen()}
-const hash=s=>{let x=5381;for(const c of s)x=((x<<5)+x+c.charCodeAt(0))>>>0;return x.toString(36)};
-function tryUnlock(){const S=DB.set;if(S.pass&&hash($('#pw').value)!==S.pass){$('#lock .err').textContent='Incorrect password';$('#pw').value='';const l=$('.who');l.animate([{transform:'translateX(-8px)'},{transform:'translateX(8px)'},{transform:'none'}],{duration:200,iterations:2});return}
+const hashOld=s=>{let x=5381;for(const c of s)x=((x<<5)+x+c.charCodeAt(0))>>>0;return x.toString(36)};
+const hx=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
+async function pbk(pw,salt){const k=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveBits']);return hx(await crypto.subtle.deriveBits({name:'PBKDF2',salt,iterations:150000,hash:'SHA-256'},k,256))}
+async function hashPw(pw){const salt=crypto.getRandomValues(new Uint8Array(16));return `pbkdf2$${hx(salt)}$${await pbk(pw,salt)}`}
+async function checkPw(pw,st){if(!st)return true;if(st.startsWith('pbkdf2$')){const [,s,hh]=st.split('$');return await pbk(pw,new Uint8Array(s.match(/../g).map(x=>parseInt(x,16))))===hh}return hashOld(pw)===st}
+async function tryUnlock(){const S=DB.set;if(S.pass&&!(await checkPw($('#pw').value,S.pass))){$('#lock .err').textContent='Incorrect password';$('#pw').value='';const l=$('.who');l.animate([{transform:'translateX(-8px)'},{transform:'translateX(8px)'},{transform:'none'}],{duration:200,iterations:2});return}
+  if(S.pass&&!S.pass.startsWith('pbkdf2$')){S.pass=await hashPw($('#pw').value);save()}
   const l=$('#lock');l.style.opacity='0';l.style.transform='scale(1.15)';l.style.filter='blur(10px)';setTimeout(()=>l.style.display='none',500);beep(880,.05)}
 $('#lock').addEventListener('click',e=>{if(!DB.set.pass&&$('#lock').style.display!=='none')tryUnlock()});
 $('#pw').addEventListener('keydown',e=>{if(e.key==='Enter')tryUnlock()});
@@ -716,7 +734,7 @@ Apps.terminal={name:'Terminal',icon:ICONS.terminal,w:640,h:400,open(win){
    users:()=>Object.keys(DB.users).map(k=>k+(k===DB.current?' *':'')).join('\n'),
    sudo(){throw Error('nice try — you are already the admin')},
    music(a){const c=a[0];if(c==='play')Player.play();else if(c==='pause')Player.pause();else if(c==='next')Player.next();else if(c==='prev')Player.prev();return (Player.playing?'Playing: ':'Paused: ')+Player.cur().n},
-   async reset(){if(await confirmD('Reset Aura OS?','All files and settings will be erased.')){localStorage.removeItem(KEY);location.reload()}}
+   async reset(){if(await confirmD('Reset Aura OS?','All files and settings will be erased.')){Store.wipe().then(()=>location.reload())}}
   };
   async function run(line){let m=line.match(/^(.*?)\s*(>>?)\s*(\S+)\s*$/);let redir=null;if(m&&!/^\s*$/.test(m[1])){line=m[1];redir={app:m[2]==='>>',file:m[3]}}
     const a=sh(line);if(!a.length)return;const c=a.shift();
@@ -839,7 +857,7 @@ Apps.settings={name:'System Settings',icon:ICONS.settings,w:720,h:500,single:tru
   function draw(){side.innerHTML='';pages.forEach(([k,n])=>side.append(h('div',{class:'sb'+(k===page?' sel':''),onclick:()=>{page=k;draw()}},n)));pane.innerHTML='';const box=h('div',{class:'sett-h'});pane.append(box);
    const H=t=>box.append(h('h2',0,t));
    if(page==='general'){H('General');box.append(h('div',{class:'card'},row('Name',h('input',{class:'field',value:S.name,onchange:e=>{S.name=e.target.value.trim()||'User';save();prepLock()}})),row('Version','Aura OS 1.0'),row('Storage used',fmtSize(FS.size(DB.fs))),row('Browser',navigator.userAgent.slice(0,60)+'…')),
-     h('div',{class:'card'},row('Reset Aura OS','',"Erase all files and settings"),h('div',{class:'crow'},h('div',{class:'btn',style:'flex:none;color:#ff453a',onclick:async()=>{if(await confirmD('Reset Aura OS?','All files and settings will be erased.')){localStorage.removeItem(KEY);location.reload()}}},'Erase All Content and Settings…'))))}
+     h('div',{class:'card'},row('Reset Aura OS','',"Erase all files and settings"),h('div',{class:'crow'},h('div',{class:'btn',style:'flex:none;color:#ff453a',onclick:async()=>{if(await confirmD('Reset Aura OS?','All files and settings will be erased.')){Store.wipe().then(()=>location.reload())}}},'Erase All Content and Settings…'))))}
    if(page==='appearance'){H('Appearance');box.append(h('div',{class:'card'},row('Dark mode',tog(S.dark,v=>applyTheme({dark:v}))),row('Accent color',h('div',{class:'swatches'},['#0a84ff','#bf5af2','#ff375f','#ff9f0a','#30d158','#8e8e93'].map(c=>h('i',{class:c===S.accent?'sel':'',style:'background:'+c,onclick:()=>{applyTheme({accent:c});draw()}}))))))}
    if(page==='wall'){H('Wallpaper');box.append(h('div',{class:'card'},h('div',{class:'walls'},WALLS.map((w,i)=>h('div',{class:'wall'+(i===S.wall?' sel':''),style:'background:'+w,onclick:()=>{applyTheme({wall:i});draw()}})))));
      let ph=[];try{ph=FS.ls(HOME+'/Pictures').filter(e=>e.node.t==='f'&&isImg(e.name))}catch{}
@@ -847,13 +865,15 @@ Apps.settings={name:'System Settings',icon:ICONS.settings,w:720,h:500,single:tru
    if(page==='widgets'){H('Desktop & Widgets');box.append(h('div',{class:'card'},row('Show desktop widgets',tog(S.widgets,v=>{S.widgets=v;save();Widgets.build()}),'Clock, calendar and reminders'),row('24-hour clock',tog(S.h24,v=>{S.h24=v;save();lastMin=-1;tick()})),row('Do Not Disturb',tog(S.dnd,v=>{S.dnd=v;save();buildCC()}),'Silences notification banners')))}
    if(page==='users'){H('Users & Groups');const bx=h('div',{class:'card'});Object.entries(DB.users).forEach(([k,u])=>bx.append(row(u.set.name+(k===DB.current?' (you)':''),k===DB.current?h('span',{style:'color:var(--text2)'},'Admin'):h('div',{class:'btn',style:'flex:none;color:#ff453a',onclick:async()=>{if(await confirmD('Delete user '+u.set.name+'?','Their home folder will be erased.')){delete DB.users[k];try{FS.rm('/Users/'+k)}catch{}save();draw()}}},'Delete'),'/Users/'+k)));
      const nn=h('input',{class:'field',placeholder:'Full name'}),np=h('input',{class:'field',type:'password',placeholder:'Password (optional)'});
-     box.append(bx,h('div',{class:'card'},row('New user',h('div',{style:'display:flex;gap:8px'},nn,np,h('div',{class:'btn',style:'flex:none',onclick:()=>{const name=nn.value.trim();if(!name)return;let key=name.toLowerCase().replace(/[^a-z0-9]/g,'')||'user';while(DB.users[key])key+='x';mkHome(key);DB.users[key]={set:Object.assign(defSet(),{name,pass:np.value?hash(np.value):'',wall:Math.floor(Math.random()*WALLS.length),todos:[],cal:{},alarms:[]})};FS.emit();draw();toast('Users','Created '+name)}},'Add User'))),h('div',{class:'crow',style:'color:var(--text2);font-size:12px'},'Switch users from the lock screen (Apple menu → Lock Screen).')))}
+     box.append(bx,h('div',{class:'card'},row('New user',h('div',{style:'display:flex;gap:8px'},nn,np,h('div',{class:'btn',style:'flex:none',onclick:async()=>{const name=nn.value.trim();if(!name)return;const ph=np.value?await hashPw(np.value):'';let key=name.toLowerCase().replace(/[^a-z0-9]/g,'')||'user';while(DB.users[key])key+='x';mkHome(key);DB.users[key]={set:Object.assign(defSet(),{name,pass:ph,wall:Math.floor(Math.random()*WALLS.length),todos:[],cal:{},alarms:[]})};FS.emit();draw();toast('Users','Created '+name)}},'Add User'))),h('div',{class:'crow',style:'color:var(--text2);font-size:12px'},'Switch users from the lock screen (Apple menu → Lock Screen).')))}
    if(page==='perf'){H('Performance');const sel=h('select',{class:'field',onchange:e=>{const v=e.target.value;S.lite=v==='auto'?null:v==='on';applyTheme({})}},[['auto','Automatic'],['on','On (fastest)'],['off','Off (all effects)']].map(([v,l])=>h('option',{value:v,selected:(S.lite===null?'auto':S.lite?'on':'off')===v},l)));
      box.append(h('div',{class:'card'},row('Reduce transparency & motion',sel,'Removes blur effects and animations to use less CPU, GPU and battery. Automatic turns it on for low-power devices.')),h('div',{class:'card'},row('Background work','Paused','Timers, clock widgets and animations sleep when the tab is hidden or a window is minimized.'),row('Open windows',String(WM.wins.length)),row('JS memory',performance.memory?fmtSize(performance.memory.usedJSHeapSize):'n/a')))}
    if(page==='dock'){H('Dock');box.append(h('div',{class:'card'},row('Icon size',h('input',{type:'range',min:36,max:80,value:S.dock,style:'width:200px;margin:0',oninput:e=>applyTheme({dock:+e.target.value})}))))}
    if(page==='sound'){H('Sound & Display');box.append(h('div',{class:'card'},row('Volume',h('input',{type:'range',min:0,max:100,value:S.volume,style:'width:200px;margin:0',oninput:e=>{S.volume=+e.target.value;Player.vol();save()},onchange:()=>beep()})),row('Brightness',h('input',{type:'range',min:30,max:100,value:S.bright,style:'width:200px;margin:0',oninput:e=>{S.bright=+e.target.value;applyBright();save()}})),row('Wi-Fi',tog(S.wifi,v=>{S.wifi=v;save();updateStatus()}))))}
-   if(page==='security'){H('Lock & Password');const pw=h('input',{class:'field',type:'password',placeholder:S.pass?'New password':'Set a password'});box.append(h('div',{class:'card'},row('Password',h('div',{style:'display:flex;gap:8px'},pw,h('div',{class:'btn',style:'flex:none',onclick:()=>{if(!pw.value)return;S.pass=hash(pw.value);save();toast('Settings','Password updated');draw()}},'Set'),S.pass?h('div',{class:'btn',style:'flex:none',onclick:()=>{S.pass='';save();toast('Settings','Password removed');draw()}},'Remove'):null),'Required to unlock the screen'),row('Lock now','' ,'Shortcut: Ctrl+L'),h('div',{class:'crow'},h('div',{class:'btn',style:'flex:none',onclick:lockScreen},'Lock Screen'))))}
-   if(page==='storage'){H('Storage');const tot=FS.size(DB.fs);box.append(h('div',{class:'card'},row('Files & folders',fmtSize(tot)),row('Items in Trash',String(Object.keys(FS.get('/Trash').c).length))))}}
+   if(page==='security'){H('Lock & Password');const pw=h('input',{class:'field',type:'password',placeholder:S.pass?'New password':'Set a password'});box.append(h('div',{class:'card'},row('Password',h('div',{style:'display:flex;gap:8px'},pw,h('div',{class:'btn',style:'flex:none',onclick:async()=>{if(!pw.value)return;S.pass=await hashPw(pw.value);save();toast('Settings','Password updated');draw()}},'Set'),S.pass?h('div',{class:'btn',style:'flex:none',onclick:()=>{S.pass='';save();toast('Settings','Password removed');draw()}},'Remove'):null),'Required to unlock the screen'),row('Lock now','' ,'Shortcut: Ctrl+L'),h('div',{class:'crow'},h('div',{class:'btn',style:'flex:none',onclick:lockScreen},'Lock Screen'))))}
+   if(page==='storage'){H('Storage');const tot=FS.size(DB.fs);const quota=h('span',0,'…');navigator.storage?.estimate?.().then(e=>{quota.textContent=`${fmtSize(e.usage||0)} of ${fmtSize(e.quota||0)}`}).catch(()=>{});
+     box.append(h('div',{class:'card'},row('Files & folders',fmtSize(tot)),row('Items in Trash',String(Object.keys(FS.get('/Trash').c).length)),row('Browser storage',quota,'IndexedDB — hundreds of MB, survives restarts')),
+       h('div',{class:'card'},row('Back up everything','', 'Download one file with all users, files and settings'),h('div',{class:'crow'},h('div',{class:'btn',style:'flex:none',onclick:exportBackup},'Export Backup…'),h('div',{class:'btn',style:'flex:none',onclick:importBackup},'Restore Backup…'))))}}
   draw();win.update=a=>{if(a.page){page=a.page;draw()}}}};
 
 

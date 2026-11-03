@@ -170,7 +170,7 @@ const ok = (c, m) => { c ? pass++ : fail++; console.log((c ? '  ✓ ' : '  ✗ '
   ok(await page.evaluate(() => AuraOS.FS.exists('/Users/user/demo/d.txt') && AuraOS.DB.set.wall === 2), 'files & settings persist across reload');
   ok(await page.evaluate(() => AuraOS.FS.read('/Users/user/Documents/Todo.txt')) === 'edited content', 'edited file persists');
   await page.evaluate(() => AuraOS.Apps.settings && AuraOS.launch('settings', { page: 'security' }));
-  await page.fill('.window:last-child input[type=password]', 'secret'); await page.click('.window:last-child .btn:has-text("Set")');
+  await page.fill('.window:last-child input[type=password]', 'secret'); await page.click('.window:last-child .btn:has-text("Set")'); await page.waitForTimeout(700);
   await page.keyboard.press('Control+l'); await page.waitForTimeout(700);
   await page.fill('#pw', 'wrong'); await page.keyboard.press('Enter'); await page.waitForTimeout(500);
   ok(await page.$eval('#lock', e => getComputedStyle(e).display) === 'flex', 'wrong password keeps lock');
@@ -307,7 +307,7 @@ const ok = (c, m) => { c ? pass++ : fail++; console.log((c ? '  ✓ ' : '  ✗ '
   console.log('Multiple users');
   await page.evaluate(() => AuraOS.launch('settings', { page: 'users' })); await page.waitForTimeout(300);
   await page.fill('.window:last-child input[placeholder="Full name"]', 'Alex'); await page.fill('.window:last-child input[type=password]', 'pw1');
-  await page.click('.window:last-child .btn:has-text("Add User")'); await page.waitForTimeout(300);
+  await page.click('.window:last-child .btn:has-text("Add User")'); await page.waitForTimeout(800);
   ok(await page.evaluate(() => !!AuraOS.DB.users.alex && AuraOS.FS.isDir('/Users/alex/Documents')), 'create user with home folder');
   await page.evaluate(() => AuraOS.logout()); await page.waitForTimeout(700);
   ok(await page.$('#lock .users .avatar[data-user="alex"]') !== null, 'lock screen shows other users'); await shot('17-users');
