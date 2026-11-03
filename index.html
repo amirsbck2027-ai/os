@@ -4,6 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Aura OS</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0a84ff">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <style>
 :root{
   --accent:#0a84ff;
@@ -911,7 +917,7 @@ Apps.settings={name:'System Settings',icon:ICONS.settings,w:800,h:560,single:tru
   const tog=(on,fn)=>{const s=h('div',{class:'sw'+(on?' on':''),onclick:()=>{on=!on;s.classList.toggle('on',on);fn(on)}});return s};
   function draw(){side.innerHTML='';pages.forEach(([k,n,ic,col])=>side.append(h('div',{class:'sb'+(k===page?' sel':''),'data-page':k,onclick:()=>{page=k;draw()}},h('span',{class:'chip',style:'background:'+col,html:ico(ic,14)}),n)));pane.innerHTML='';const box=h('div',{class:'sett-h'});pane.append(box);
    const H=t=>box.append(h('h2',0,t));
-   if(page==='general'){H('General');box.append(h('div',{class:'card'},row('Name',h('input',{class:'field',value:S.name,onchange:e=>{S.name=e.target.value.trim()||'User';save();prepLock()}})),row('Version','Aura OS 1.0'),row('Storage used',fmtSize(FS.size(DB.fs))),row('Browser',navigator.userAgent.slice(0,60)+'…')),
+   if(page==='general'){H('General');box.append(h('div',{class:'card'},row('Name',h('input',{class:'field',value:S.name,onchange:e=>{S.name=e.target.value.trim()||'User';save();prepLock()}})),row('Version','Aura OS 1.0'),row('Storage used',fmtSize(FS.size(DB.fs))),row('Browser',navigator.userAgent.slice(0,60)+'…'),row('Install app',PWA.installed?h('span',{class:'badge ok'},'Installed'):PWA.ev?h('div',{class:'btn sm pri',onclick:async()=>{await PWA.install();draw()}},'Install…'):h('span',{class:'badge'},'Not available'),PWA.installed?'Running as an installed app':PWA.ev?'Add Aura OS to your desktop or home screen, works offline':'Use your browser menu: Install app / Add to Home Screen')),
      h('div',{class:'card'},row('Reset Aura OS','',"Erase all files and settings"),h('div',{class:'crow'},h('div',{class:'btn',style:'flex:none;color:#ff453a',onclick:async()=>{if(await confirmD('Reset Aura OS?','All files and settings will be erased.')){Store.wipe().then(()=>location.reload())}}},'Erase All Content and Settings…'))))}
    if(page==='appearance'){H('Appearance');box.append(h('div',{class:'card'},row('Dark mode',tog(S.dark,v=>applyTheme({dark:v}))),row('Accent color',h('div',{class:'swatches'},['#0a84ff','#bf5af2','#ff375f','#ff9f0a','#30d158','#8e8e93'].map(c=>h('i',{class:c===S.accent?'sel':'',style:'background:'+c,onclick:()=>{applyTheme({accent:c});draw()}}))))))}
    if(page==='wall'){H('Wallpaper');box.append(h('div',{class:'card'},h('div',{class:'walls'},WALLS.map((w,i)=>h('div',{class:'wall'+(i===S.wall?' sel':''),style:'background:'+w,onclick:()=>{applyTheme({wall:i});draw()}})))));
@@ -957,7 +963,7 @@ Apps.settings={name:'System Settings',icon:ICONS.settings,w:800,h:560,single:tru
    if(page==='storage'){H('Storage');const tot=FS.size(DB.fs);const quota=h('span',0,'…');navigator.storage?.estimate?.().then(e=>{quota.textContent=`${fmtSize(e.usage||0)} of ${fmtSize(e.quota||0)}`}).catch(()=>{});
      box.append(h('div',{class:'card'},row('Files & folders',fmtSize(tot)),row('Items in Trash',String(Object.keys(FS.get('/Trash').c).length)),row('Browser storage',quota,'IndexedDB — hundreds of MB, survives restarts')),
        h('div',{class:'card'},row('Back up everything','', 'Download one file with all users, files and settings'),h('div',{class:'crow'},h('div',{class:'btn',style:'flex:none',onclick:exportBackup},'Export Backup…'),h('div',{class:'btn',style:'flex:none',onclick:importBackup},'Restore Backup…'))))}}
-  draw();win.update=a=>{if(a.page){page=a.page;draw()}};win.closeHook(Sys.on(force=>{if(['wifi','bluetooth','battery','cloud'].includes(page)&&(force||!document.activeElement?.closest?.('.sett-h')))draw()}))}};
+  draw();win.update=a=>{if(a.page){page=a.page;draw()}};win.closeHook(Sys.on(force=>{if(['wifi','bluetooth','battery','cloud','general'].includes(page)&&(force||!document.activeElement?.closest?.('.sett-h')))draw()}))}};
 
 
 /* ======================================================================= EXTRA ICONS */
@@ -1294,6 +1300,11 @@ const Cloud={busy:false,err:null,last:null,
 /* ======================================================================= BOOT */
 function init(){
   Player.on(()=>{if($('#cc.show'))buildCC()});Sys.on(()=>{if($('#cc.show'))buildCC()});Sys.init();Cloud.init();
+  const PWA=window.PWA={ev:null,get installed(){return matchMedia('(display-mode: standalone)').matches||navigator.standalone===true||!!window.auraNative},
+    async install(){if(!this.ev)return false;this.ev.prompt();const r=await this.ev.userChoice;this.ev=null;Sys.emit(true);return r.outcome==='accepted'}};
+  addEventListener('beforeinstallprompt',e=>{e.preventDefault();PWA.ev=e;Sys.emit(true)});
+  addEventListener('appinstalled',()=>{PWA.ev=null;toast('Aura OS','Installed as an app');Sys.emit(true)});
+  if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)&&!window.auraNative)navigator.serviceWorker.register('sw.js').catch(()=>{});
   setInterval(tick,1000);
   loadUser();
   window.AuraOS={Cloud,Sys,Weather,launch,WM,FS,Apps,DB,toast,applyTheme,lockScreen,Player,Widgets,logout,loadUser,dataChanged};

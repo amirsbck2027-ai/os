@@ -481,6 +481,26 @@ const ok = (c, m) => { c ? pass++ : fail++; console.log((c ? '  ✓ ' : '  ✗ '
   await shot('21-cloud');
   await page.evaluate(() => AuraOS.WM.wins.slice().forEach(w => AuraOS.WM.close(w)));
 
+  console.log('PWA (manifest, service worker, offline)');
+  const mf = await page.evaluate(async () => { const l = document.querySelector('link[rel=manifest]'); return l ? await (await fetch(l.href)).json() : null; });
+  ok(mf && mf.display === 'standalone' && mf.name === 'Aura OS', 'manifest linked and valid');
+  const icons = await page.evaluate(async m => Promise.all(m.icons.map(async i => { const r = await fetch(new URL(i.src, location.href)); const b = await r.blob(); return r.ok && b.type === 'image/png' && b.size > 500; })), mf);
+  ok(icons.length >= 3 && icons.every(Boolean), 'all manifest icons are real PNGs');
+  ok(mf.icons.some(i => i.sizes === '512x512' && i.purpose === 'maskable') && mf.icons.some(i => i.sizes === '192x192'), 'has 192, 512 and maskable icons');
+  await page.evaluate(async () => { await navigator.serviceWorker.ready; });
+  ok(await page.evaluate(() => navigator.serviceWorker.getRegistrations().then(r => r.length === 1)), 'service worker registered');
+  await page.reload(); await page.waitForSelector('#lock', { state: 'visible', timeout: 6000 });
+  ok(await page.evaluate(() => !!navigator.serviceWorker.controller), 'service worker controls the page');
+  await page.evaluate(async () => { for (const u of ['./', './index.html', './manifest.webmanifest']) await fetch(u); });
+  await ctx.setOffline(true);
+  await page.reload(); await page.waitForSelector('#lock', { state: 'visible', timeout: 8000 });
+  await page.waitForTimeout(700); await page.click('#lock'); await page.waitForTimeout(700);
+  ok(await page.evaluate(() => !!window.AuraOS && !!AuraOS.FS.exists('/Users/user/Documents')), 'app boots fully OFFLINE from cache, files intact');
+  await page.evaluate(() => AuraOS.launch('settings', { page: 'general' })); await page.waitForTimeout(300);
+  ok((await page.textContent('.window:last-child')).includes('Install app'), 'Settings has Install row');
+  await page.evaluate(() => AuraOS.WM.wins.slice().forEach(w => AuraOS.WM.close(w)));
+  await ctx.setOffline(false);
+
   console.log('Performance');
   await page.evaluate(() => AuraOS.applyTheme({ lite: true }));
   ok(await page.evaluate(() => document.documentElement.classList.contains('lite')), 'Reduce effects mode toggles');
