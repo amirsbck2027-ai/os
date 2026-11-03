@@ -6,12 +6,53 @@ let pass = 0, fail = 0;
 const ok = (c, m) => { c ? pass++ : fail++; console.log((c ? '  ✓ ' : '  ✗ ') + m); };
 
 (async () => {
-  const browser = await chromium.launch();
-  const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  const browser = await chromium.launch({ args: ['--use-fake-device-for-media-stream', '--use-fake-ui-for-media-stream'] });
+  const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, permissions: ['camera'] });
+  // Mock every network service so the suite is deterministic and works offline.
+  const json = (o, st = 200) => ({ status: st, contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: JSON.stringify(o) });
+  const SB = { files: {}, settings: null, users: { 'test@example.com': 'secret1' }, calls: [] };
+  await ctx.route(/cloudflare\.com\/cdn-cgi\/trace/, r => r.fulfill({ status: 200, headers: { 'access-control-allow-origin': '*' }, body: 'ip=203.0.113.9\nloc=XX\ncolo=TST\nhttp=http/2\ntls=TLSv1.3\n' }));
+  await ctx.route(/ipwho\.is/, r => r.fulfill(json({ success: true, city: 'Testville', region: 'TS', country: 'Nowhere', latitude: 10, longitude: 20, connection: { isp: 'TestNet' }, timezone: { id: 'UTC' } })));
+  await ctx.route(/open-meteo\.com\/v1\/forecast/, r => {
+    const t = [], tc = [], hr = new Date(); hr.setMinutes(0, 0, 0);
+    for (let i = -2; i < 48; i++) { t.push(new Date(hr.getTime() + i * 3600e3 - hr.getTimezoneOffset() * 60e3).toISOString().slice(0, 16)); tc.push(10 + i % 5); }
+    const days = [...Array(7)].map((_, i) => new Date(Date.now() + i * 864e5).toISOString().slice(0, 10));
+    r.fulfill(json({ current: { time: t[2], temperature_2m: 21.4, apparent_temperature: 20, relative_humidity_2m: 55, wind_speed_10m: 9, weather_code: 0, is_day: 1 }, hourly: { time: t, temperature_2m: tc, weather_code: tc.map(() => 1) }, daily: { time: days, weather_code: days.map(() => 2), temperature_2m_max: days.map(() => 25), temperature_2m_min: days.map(() => 12) } }));
+  });
+  await ctx.route(/geocoding-api\.open-meteo\.com/, r => r.fulfill(json({ results: [{ name: 'Paris', admin1: 'Ile-de-France', country_code: 'FR', latitude: 48.85, longitude: 2.35 }] })));
+  await ctx.route(/\.supabase\.co\//, async r => {
+    const q = new globalThis.URL(r.request().url()), m = r.request().method(), pth = q.pathname; SB.calls.push(m + ' ' + pth);
+    if (m === 'OPTIONS') return r.fulfill({ status: 204, headers: { 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': '*' } });
+    if (pth === '/auth/v1/token') {
+      const b = JSON.parse(r.request().postData() || '{}');
+      if (SB.users[b.email] !== b.password) return r.fulfill(json({ error_description: 'Invalid login credentials' }, 400));
+      return r.fulfill(json({ access_token: 'tok', refresh_token: 'ref', expires_in: 3600, user: { id: 'u-1', email: b.email } }));
+    }
+    if (pth === '/rest/v1/aura_files') {
+      if (m === 'GET') { const p = q.searchParams.get('path'); const all = Object.values(SB.files); return r.fulfill(json(p ? all.filter(f => 'eq.' + f.path === p) : all)); }
+      if (m === 'POST') { JSON.parse(r.request().postData()).forEach(f => SB.files[f.path] = f); return r.fulfill(json([])); }
+      if (m === 'DELETE') { SB.files = {}; return r.fulfill(json([])); }
+    }
+    if (pth === '/rest/v1/aura_settings') {
+      if (m === 'GET') return r.fulfill(json(SB.settings ? [SB.settings] : []));
+      if (m === 'POST') { SB.settings = { data: JSON.parse(r.request().postData())[0].data, updated_at: new Date().toISOString() }; return r.fulfill(json([SB.settings])); }
+      if (m === 'DELETE') { SB.settings = null; return r.fulfill(json([])); }
+    }
+    r.fulfill(json({ message: 'not mocked' }, 404));
+  });
+  // Fake Web Bluetooth (headless Chromium has none).
+  await ctx.addInitScript(() => {
+    const dev = { id: 'bt-dev-1', name: 'Test Buds', addEventListener() {}, forget() {}, gatt: { connected: false } };
+    const chr = { readValue: async () => new DataView(new Uint8Array([77]).buffer), startNotifications: async () => {}, addEventListener() {} };
+    dev.gatt.connect = async () => { dev.gatt.connected = true; return { getPrimaryService: async n => { if (n === 'battery_service') return { getCharacteristic: async () => chr }; throw new Error('no service'); } }; };
+    dev.gatt.disconnect = () => { dev.gatt.connected = false; };
+    Object.defineProperty(navigator, 'bluetooth', { configurable: true, value: { getAvailability: async () => true, getDevices: async () => [], requestDevice: async () => dev } });
+    window.__btDev = dev;
+  });
   const page = await ctx.newPage();
   const errors = [];
   page.on('pageerror', e => errors.push(e.message));
-  page.on('console', m => m.type() === 'error' && errors.push(m.text()));
+  page.on('console', m => m.type() === 'error' && !/\/auth\/v1\/token/.test(m.location().url) && errors.push(m.text())); // wrong-password test makes an expected 400
   const shot = n => page.screenshot({ path: `${OUT}/${n}.png` });
   const wins = () => page.evaluate(() => AuraOS.WM.wins.length);
   const openApp = async id => { if (await page.$(`.di[data-app="${id}"]`)) await page.click(`.di[data-app="${id}"]`); else await page.evaluate(i => AuraOS.launch(i), id); await page.waitForTimeout(350); };
@@ -236,7 +277,7 @@ const ok = (c, m) => { c ? pass++ : fail++; console.log((c ? '  ✓ ' : '  ✗ '
   ok((await page.textContent('#widgets')).includes('Buy milk'), 'reminder appears in desktop widget');
   await page.click('.window:last-child .rem .wt:has-text("Buy milk")'); await page.waitForTimeout(200);
   ok(await page.evaluate(() => AuraOS.DB.set.todos.find(t => t.t === 'Buy milk').d), 'toggle reminder done');
-  ok(await page.$$eval('#widgets .wd', e => e.length) === 3, 'three desktop widgets');
+  ok(await page.$$eval('#widgets .wd', e => e.length) === 4, 'four desktop widgets (clock, calendar, reminders, weather)');
   await page.click('#mbclock'); await page.waitForTimeout(500); await shot('13-notification-center');
   ok(await page.$$eval('#nc .wd', e => e.length) >= 4, 'Notification Center has widgets');
   await page.click('#mbclock');
@@ -324,6 +365,121 @@ const ok = (c, m) => { c ? pass++ : fail++; console.log((c ? '  ✓ ' : '  ✗ '
   await page.evaluate(() => AuraOS.logout()); await page.waitForTimeout(600);
   await page.click('#lock .users .avatar[data-user="user"]'); await page.waitForTimeout(300); await page.click('#lock'); await page.waitForTimeout(700);
   ok(await page.evaluate(() => AuraOS.DB.current === 'user'), 'switch back to original user');
+
+  console.log('Wi-Fi & network (honest in browser)');
+  await page.evaluate(() => AuraOS.launch('settings', { page: 'wifi' })); await page.waitForTimeout(900);
+  let wt = await page.textContent('.window:last-child');
+  ok(wt.includes('Connected') && wt.includes('203.0.113.9') && wt.includes('TestNet'), 'Wi-Fi page shows real connection info (IP, ISP)');
+  ok(wt.includes('Web browsers deliberately hide Wi-Fi names'), 'browser does NOT fake a nearby-networks list');
+  ok(await page.$('.window:last-child .netrow') === null, 'no fake network rows in browser');
+  await page.evaluate(() => { window.auraNative = { wifi: { scan: async () => [{ ssid: 'HomeNet', signal: 80, security: 'WPA2', connected: true }, { ssid: 'Cafe', signal: 40, security: '' }] }, openNetworkSettings() { window.__openedNet = true; } }; AuraOS.launch('settings', { page: 'general' }); AuraOS.launch('settings', { page: 'wifi' }); });
+  await page.waitForTimeout(400);
+  await page.click('.window:last-child .btn:has-text("Scan")'); await page.waitForTimeout(500);
+  wt = await page.textContent('.window:last-child');
+  ok(wt.includes('HomeNet') && wt.includes('Cafe') && wt.includes('2 found'), 'desktop-app bridge: scan lists networks');
+  await page.click('.window:last-child .btn:has-text("Open system Wi-Fi settings")');
+  ok(await page.evaluate(() => window.__openedNet === true), 'desktop-app bridge: opens system Wi-Fi settings');
+  await page.evaluate(() => { delete window.auraNative; });
+
+  console.log('Bluetooth (mocked Web Bluetooth)');
+  await page.evaluate(() => AuraOS.launch('settings', { page: 'bluetooth' })); await page.waitForTimeout(400);
+  ok((await page.textContent('.window:last-child')).includes('Ready'), 'Bluetooth page ready');
+  await page.click('.window:last-child .btn:has-text("Add Device")'); await page.waitForTimeout(600);
+  wt = await page.textContent('.window:last-child');
+  ok(wt.includes('Test Buds') && wt.includes('Connected · 77%'), 'pair + connect shows device and battery');
+  ok(await page.evaluate(() => AuraOS.DB.set.bt.some(d => d.id === 'bt-dev-1')), 'paired device remembered in settings');
+  await page.click('.window:last-child .btn:has-text("Disconnect")'); await page.waitForTimeout(200);
+  ok(await page.evaluate(() => window.__btDev.gatt.connected === false), 'disconnect works');
+  await page.click('.window:last-child .btn:has-text("Forget")'); await page.waitForTimeout(200);
+  ok(await page.evaluate(() => AuraOS.DB.set.bt.length === 0), 'forget removes device');
+  await page.evaluate(() => AuraOS.WM.wins.slice().forEach(w => AuraOS.WM.close(w)));
+
+  console.log('Weather');
+  await openApp('weather'); await page.waitForTimeout(700);
+  wt = await page.textContent('.window:last-child');
+  ok(wt.includes('21') && wt.includes('Clear'), 'weather shows current temperature + condition');
+  ok((await page.textContent('.window:last-child .ttl')).includes('Testville'), 'location comes from IP lookup');
+  ok((await page.textContent('#widgets [data-w=weather]')).includes('21'), 'desktop weather widget shows temperature');
+  await page.evaluate(() => { AuraOS.DB.set.unit = 'f'; });
+  ok(await page.evaluate(() => AuraOS.Weather.fmt(21.4)) === '71°F', '°C → °F conversion');
+  await page.evaluate(() => { AuraOS.DB.set.unit = 'c'; });
+  ok(await page.evaluate(async () => (await AuraOS.Weather.search('par'))[0].name) === 'Paris, Ile-de-France, FR', 'city search works');
+  await shot('19-weather');
+  await page.evaluate(() => AuraOS.WM.wins.slice().forEach(w => AuraOS.WM.close(w)));
+
+  console.log('Camera (fake device)');
+  await openApp('camera'); await page.waitForTimeout(1500);
+  ok(await page.evaluate(() => AuraOS.WM.of('camera')[0].cameraState().live), 'camera stream is live');
+  ok(await page.$eval('.window:last-child video', v => v.videoWidth > 0), 'video frames arrive');
+  const picsBefore = await page.evaluate(() => Object.keys(AuraOS.FS.get('/Users/user/Pictures').c).length);
+  await page.click('.window:last-child button[title="Take Photo"]'); await page.waitForTimeout(400);
+  ok(await page.evaluate(n => Object.keys(AuraOS.FS.get('/Users/user/Pictures').c).length === n + 1, picsBefore), 'photo saved to Pictures');
+  await shot('20-camera');
+  await page.evaluate(() => AuraOS.WM.wins.slice().forEach(w => AuraOS.WM.close(w)));
+  await page.waitForTimeout(500);
+  ok(await page.evaluate(() => document.querySelectorAll('video').length === 0), 'closing Camera releases the video element');
+
+  console.log('System Info');
+  await openApp('sysinfo'); await page.waitForTimeout(400);
+  wt = await page.textContent('.window:last-child');
+  ok(['Aura OS', 'CPU threads', 'Screen', 'Time zone', 'Storage used'].every(k => wt.includes(k)), 'System Info lists real device facts');
+  ok(wt.includes('1440×900') || wt.includes('1440') , 'screen size is the real one');
+  await page.evaluate(() => AuraOS.WM.wins.slice().forEach(w => AuraOS.WM.close(w)));
+  await openApp('terminal'); await term('sysinfo'); await term('weather');
+  const t3 = await page.textContent('.window:last-child .term');
+  ok(t3.includes('CPU threads') && t3.includes('Testville'), 'terminal sysinfo + weather commands');
+  await page.evaluate(() => AuraOS.WM.wins.slice().forEach(w => AuraOS.WM.close(w)));
+
+  console.log('Backup & restore');
+  await page.evaluate(() => AuraOS.FS.write('/Users/user/Documents/backup-me.txt', 'precious'));
+  await page.evaluate(() => AuraOS.launch('settings', { page: 'storage' })); await page.waitForTimeout(300);
+  const [bk] = await Promise.all([page.waitForEvent('download'), page.click('.window:last-child .btn:has-text("Export Backup")')]);
+  ok(/^aura-os-backup-\d{4}-\d\d-\d\d\.json$/.test(bk.suggestedFilename()), 'backup downloads as dated JSON');
+  const bkPath = `${OUT}/backup.json`; await bk.saveAs(bkPath);
+  const bkObj = JSON.parse(require('fs').readFileSync(bkPath, 'utf8'));
+  ok(!!bkObj.fs && !!bkObj.users, 'backup holds fs + users');
+  await page.evaluate(() => AuraOS.FS.trash('/Users/user/Documents/backup-me.txt')); await page.waitForTimeout(150);
+  ok(await page.evaluate(() => !AuraOS.FS.exists('/Users/user/Documents/backup-me.txt')), 'file removed before restore');
+  const fch2 = page.waitForEvent('filechooser');
+  await page.click('.window:last-child .btn:has-text("Restore Backup")');
+  await (await fch2).setFiles(bkPath); await page.waitForTimeout(300);
+  await Promise.all([page.waitForEvent('load'), page.click('#dlg .btn.pri')]);
+  await page.waitForSelector('#lock', { state: 'visible', timeout: 6000 }); await page.waitForTimeout(700); await page.click('#lock'); await page.waitForTimeout(700);
+  ok(await page.evaluate(() => AuraOS.FS.read('/Users/user/Documents/backup-me.txt')) === 'precious', 'restore brings the file back');
+  const fch3 = page.waitForEvent('filechooser');
+  await page.evaluate(() => AuraOS.launch('settings', { page: 'storage' })); await page.waitForTimeout(300);
+  await page.click('.window:last-child .btn:has-text("Restore Backup")');
+  await (await fch3).setFiles({ name: 'bad.json', mimeType: 'application/json', buffer: Buffer.from('{"nope":1}') }); await page.waitForTimeout(400);
+  ok((await page.textContent('#toasts')).includes('Not an Aura OS backup'), 'invalid backup file is rejected');
+  await page.evaluate(() => AuraOS.WM.wins.slice().forEach(w => AuraOS.WM.close(w)));
+
+  console.log('Cloud sync (mocked Supabase)');
+  await page.evaluate(() => AuraOS.launch('settings', { page: 'cloud' })); await page.waitForTimeout(300);
+  ok((await page.textContent('.window:last-child')).includes('Not signed in'), 'Cloud page starts signed out');
+  await page.fill('.window:last-child input[type=email]', 'test@example.com'); await page.fill('.window:last-child input[type=password]', 'wrongpw');
+  await page.click('.window:last-child button:has-text("Sign In")'); await page.waitForTimeout(500);
+  ok((await page.textContent('.window:last-child')).includes('Invalid login credentials'), 'wrong password shows server error');
+  ok(await page.evaluate(() => !AuraOS.Cloud.on), 'still signed out after bad login');
+  await page.fill('.window:last-child input[type=password]', 'secret1');
+  await page.click('.window:last-child button:has-text("Sign In")');
+  await page.waitForFunction(() => AuraOS.Cloud.on && !AuraOS.Cloud.busy && AuraOS.Cloud.last, null, { timeout: 8000 });
+  ok(await page.evaluate(() => AuraOS.Cloud.on && !AuraOS.Cloud.err), 'sign in works, first sync has no error');
+  ok(Object.keys(SB.files).some(p => p.endsWith('Todo.txt')) && !!SB.settings, 'files + settings uploaded');
+  ok(SB.settings.data.accent === '#bf5af2' && !('pass' in SB.settings.data), 'settings uploaded without password');
+  await page.evaluate(() => AuraOS.FS.write('/Users/user/Documents/cloud-e2e.txt', 'v1'));
+  const cs1 = await page.evaluate(() => AuraOS.Cloud.sync());
+  ok(cs1.up === 1 && Object.values(SB.files).find(f => f.path.endsWith('cloud-e2e.txt')).content === 'v1', 'new file uploaded (1 item)');
+  const cs2 = await page.evaluate(() => AuraOS.Cloud.sync());
+  ok(cs2.up === 0 && cs2.down === 0, 'idle sync is a no-op');
+  await page.evaluate(() => AuraOS.FS.trash('/Users/user/Documents/cloud-e2e.txt')); await page.waitForTimeout(100);
+  await page.evaluate(() => AuraOS.Cloud.sync());
+  ok(Object.values(SB.files).find(f => f.path.endsWith('cloud-e2e.txt')).deleted === true, 'delete becomes a tombstone');
+  await page.evaluate(() => AuraOS.Cloud.wipeRemote());
+  ok(Object.keys(SB.files).length === 0 && SB.settings === null, 'Delete Cloud Data wipes server copy');
+  await page.evaluate(() => AuraOS.Cloud.signOut());
+  ok(await page.evaluate(() => !AuraOS.Cloud.on), 'sign out');
+  await shot('21-cloud');
+  await page.evaluate(() => AuraOS.WM.wins.slice().forEach(w => AuraOS.WM.close(w)));
 
   console.log('Performance');
   await page.evaluate(() => AuraOS.applyTheme({ lite: true }));
