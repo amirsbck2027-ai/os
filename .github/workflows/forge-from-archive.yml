@@ -33,9 +33,19 @@ jobs:
             sh -ec 'apt-get update; DEBIAN_FRONTEND=noninteractive apt-get install -y live-build debootstrap xorriso squashfs-tools ca-certificates python3; ./scripts/build.sh'
       - name: Verify ISO
         run: |
-          cd forge-os
-          test -s build/live-image-amd64.hybrid.iso
-          sha256sum -c build/live-image-amd64.hybrid.iso.sha256
+          cd forge-os/build
+          test -s live-image-amd64.hybrid.iso
+          sha256sum -c live-image-amd64.hybrid.iso.sha256
+      - name: Inspect boot image and bundled desktop
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xorriso squashfs-tools
+          xorriso -osirrox on -indev forge-os/build/live-image-amd64.hybrid.iso \
+            -extract /live/filesystem.squashfs /tmp/forge-filesystem.squashfs
+          unsquashfs -ll /tmp/forge-filesystem.squashfs usr/local/bin/forge-control | grep 'forge-control'
+          unsquashfs -ll /tmp/forge-filesystem.squashfs usr/bin/calamares | grep 'calamares'
+          unsquashfs -ll /tmp/forge-filesystem.squashfs usr/bin/xfce4-session | grep 'xfce4-session'
+          unsquashfs -ll /tmp/forge-filesystem.squashfs usr/bin/unattended-upgrade | grep 'unattended-upgrade'
       - name: Split large ISO
         run: |
           mkdir -p output
