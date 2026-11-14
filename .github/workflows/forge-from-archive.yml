@@ -46,6 +46,8 @@ jobs:
           unsquashfs -ll /tmp/forge-filesystem.squashfs usr/bin/calamares | grep 'calamares'
           unsquashfs -ll /tmp/forge-filesystem.squashfs usr/bin/xfce4-session | grep 'xfce4-session'
           unsquashfs -ll /tmp/forge-filesystem.squashfs usr/bin/unattended-upgrade | grep 'unattended-upgrade'
+          unsquashfs -ll /tmp/forge-filesystem.squashfs etc/xdg/autostart/forge-session.desktop | grep 'forge-session.desktop'
+          unsquashfs -ll /tmp/forge-filesystem.squashfs etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml | grep 'xfce4-panel.xml'
       - name: Split large ISO
         run: |
           mkdir -p output
