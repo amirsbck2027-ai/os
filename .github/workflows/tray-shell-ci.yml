@@ -1,0 +1,45 @@
+name: Tray Shell — Linux smoke test
+
+on:
+  push:
+    branches: [tray-os-shell-alpha]
+    paths:
+      - 'tray-os-source.zip'
+      - '.github/workflows/tray-shell-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  shell:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install test dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-gi gir1.2-gtk-3.0 xvfb xauth
+      - name: Unpack Tray OS
+        run: |
+          mkdir tray-os
+          unzip -q tray-os-source.zip -d tray-os
+      - name: Check source
+        run: |
+          cd tray-os
+          /usr/bin/python3 tests/test_static.py
+          bash -n run-tray.sh
+      - name: Start shell on virtual X display
+        run: |
+          cd tray-os
+          set +e
+          timeout 8s xvfb-run -a /usr/bin/python3 tray_shell.py > /tmp/tray-shell.log 2>&1
+          result=$?
+          set -e
+          cat /tmp/tray-shell.log
+          if [ "$result" -ne 124 ]; then
+            echo "Tray Shell failed to remain running (exit $result)" >&2
+            exit 1
+          fi
+          echo 'Tray Shell stayed running for 8 seconds on a virtual display.'
