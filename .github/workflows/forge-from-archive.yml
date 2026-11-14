@@ -1,0 +1,50 @@
+name: FORGE OS — ISO from source archive
+
+on:
+  push:
+    branches: [forge-os-linux-build]
+    paths:
+      - 'forge-os-source.zip'
+      - '.github/workflows/forge-from-archive.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - name: Unpack FORGE OS source
+        run: |
+          mkdir -p forge-os
+          unzip -q forge-os-source.zip -d forge-os
+          test -x forge-os/scripts/build.sh
+      - name: Validate source
+        run: cd forge-os && ./scripts/verify.sh
+      - name: Build installable ISO on Debian
+        run: |
+          docker run --rm --privileged \
+            -v "$PWD/forge-os:/project" \
+            -w /project \
+            debian:trixie \
+            sh -ec 'apt-get update; DEBIAN_FRONTEND=noninteractive apt-get install -y live-build debootstrap xorriso squashfs-tools ca-certificates python3; ./scripts/build.sh'
+      - name: Verify ISO
+        run: |
+          cd forge-os
+          test -s build/live-image-amd64.hybrid.iso
+          sha256sum -c build/live-image-amd64.hybrid.iso.sha256
+      - name: Split large ISO
+        run: |
+          mkdir -p output
+          cp forge-os/build/live-image-amd64.hybrid.iso.sha256 output/
+          split -b 512M -d -a 3 forge-os/build/live-image-amd64.hybrid.iso output/FORGE-OS.iso.part-
+      - name: Publish build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: forge-os-installer-iso-parts
+          path: output/*
+          retention-days: 14
+          if-no-files-found: error
